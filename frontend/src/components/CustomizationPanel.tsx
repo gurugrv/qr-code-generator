@@ -36,13 +36,7 @@ const CustomizationPanel: React.FC = () => {
         
 
         <div className="pt-4 border-t-2 border-gray-100 dark:border-gray-700 space-y-4">
-          <LogoUploader
-            onUpload={(logo: string) => {
-              // Logo handling will be implemented in a future update
-              console.log('Logo upload not yet implemented');
-            }}
-            disabled={loading}
-          />
+          <LogoUploader disabled={loading} />
           
           <button
             onClick={() => dispatch(generateQR())}

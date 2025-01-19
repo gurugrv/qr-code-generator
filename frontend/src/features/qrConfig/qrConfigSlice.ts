@@ -62,6 +62,7 @@ const initialState: QRConfigState = {
     errorCorrectionLevel: 'H',
     size: 300,
     margin: 4,
+    logo: null,
   },
   isCustomPattern: false,
   version: 1,
@@ -165,7 +166,8 @@ export const generateQR = createAsyncThunk<QRCodeResponse, void, { state: RootSt
           foregroundColor: fgColor,
           backgroundColor: bgColor,
           margin,
-          errorCorrectionLevel
+          errorCorrectionLevel,
+          logo: state.qrConfig.customization.logo
         } as QRCustomization
       });
       
@@ -248,6 +250,9 @@ export const qrConfigSlice = createSlice({
     updateQRConfig: (state, action: PayloadAction<Partial<QRConfigState>>) => {
       Object.assign(state, action.payload);
     },
+    setLogo: (state, action: PayloadAction<string | null>) => {
+      state.customization.logo = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -285,6 +290,7 @@ export const {
   setType,
   updateQRConfig,
   toggleCustomPattern,
+  setLogo,
 } = qrConfigSlice.actions;
 
 export const selectQRConfig = (state: RootState) => state.qrConfig;

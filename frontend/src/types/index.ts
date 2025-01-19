@@ -8,7 +8,7 @@ export const QRCodeTypeValues = {
   SMS: 'SMS',
   CALENDAR: 'CALENDAR',
   LOCATION: 'LOCATION',
-  SOCIAL: 'Social',
+  SOCIAL: 'SOCIAL',
   UPI: 'UPI'
 } as const;
 

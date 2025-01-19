@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import QRCode from 'qrcode';
+import { Canvas, Image, loadImage } from 'canvas';
 import { validateQRInput } from '../validators';
 import { generateQRCodeData } from '../services/qrService';
 import { QRCodeType, QRCustomization } from '../shared/types';
@@ -42,20 +43,47 @@ export const generateQRCode = async (req: Request<{}, {}, GenerateQRCodeRequest>
       const qrData = generateQRCodeData(type, data);
       
       // Generate QR code with customization
-      const qrCodeImage = await QRCode.toDataURL(qrData, {
-        errorCorrectionLevel: customization.errorCorrectionLevel,
+      const canvas = new Canvas(customization.size, customization.size);
+      const ctx = canvas.getContext('2d');
+
+      // Generate QR code
+      const qrCodeImage = await QRCode.toCanvas(canvas, qrData, {
         margin: customization.margin,
+        errorCorrectionLevel: customization.errorCorrectionLevel,
         color: {
           dark: customization.foregroundColor,
           light: customization.backgroundColor
         },
         width: customization.size
       });
+
+      // If logo is provided, overlay it on the QR code
+      if (customization.logo) {
+        try {
+          const logoSize = Math.floor(customization.size * 0.2); // 20% of QR code size
+          const logo = await loadImage(customization.logo);
+          
+          // Calculate center position
+          const x = (customization.size - logoSize) / 2;
+          const y = (customization.size - logoSize) / 2;
+          
+          // Create white background for logo
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+          
+          // Draw logo
+          ctx.drawImage(logo, x, y, logoSize, logoSize);
+        } catch (logoError) {
+          console.error('Error loading logo:', logoError);
+        }
+      }
+
+      const qrCodeDataUrl = canvas.toDataURL();
       
       return res.json({
         status: 'success',
         data: {
-          qrCode: qrCodeImage,
+          qrCode: qrCodeDataUrl,
           metadata: {
             type,
             createdAt: new Date(),

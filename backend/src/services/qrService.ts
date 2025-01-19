@@ -11,12 +11,29 @@ export const generateQRCodeData = (type: QRCodeType, data: Record<string, any>):
       return `WIFI:T:${data.encryption};S:${data.ssid};P:${data.password};;`;
     
     case QRCodeTypeValues.VCARD:
-      return `BEGIN:VCARD
-VERSION:3.0
-FN:${data.name}
-TEL:${data.phone}
-EMAIL:${data.email}
-END:VCARD`;
+      const nameParts = [
+        data.lastName || '',
+        data.firstName || '',
+        '', // Additional name components
+        '', // Honorific prefixes
+        ''  // Honorific suffixes
+      ].join(';');
+
+      const vcard = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        `FN:${data.firstName} ${data.lastName}`,
+        `N:${nameParts}`,
+        `TEL:${data.phone}`,
+        `EMAIL:${data.email}`
+      ];
+
+      if (data.address) {
+        vcard.push(`ADR:;;${data.address.replace(/\n/g, ';')}`);
+      }
+
+      vcard.push('END:VCARD');
+      return vcard.join('\n');
     
     case QRCodeTypeValues.CALENDAR:
       return `BEGIN:VEVENT

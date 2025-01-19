@@ -41,11 +41,25 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
   [QRCodeTypeValues.VCARD]: {
     fields: [
       {
-        name: 'name',
+        name: 'firstName',
         type: 'text',
-        label: 'Full Name',
-        placeholder: 'John Doe',
+        label: 'First Name',
+        placeholder: 'John',
         required: true
+      },
+      {
+        name: 'lastName',
+        type: 'text',
+        label: 'Last Name',
+        placeholder: 'Doe',
+        required: true
+      },
+      {
+        name: 'address',
+        type: 'text',
+        label: 'Address',
+        placeholder: '123 Main St, City, Country',
+        required: false
       },
       {
         name: 'phone',
@@ -59,6 +73,32 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         type: 'email',
         label: 'Email Address',
         placeholder: 'john.doe@example.com'
+      },
+      {
+        name: 'jobTitle',
+        type: 'text',
+        label: 'Job Title',
+        placeholder: 'Software Engineer'
+      },
+      {
+        name: 'organization',
+        type: 'text',
+        label: 'Organization',
+        placeholder: 'Acme Corp'
+      },
+      {
+        name: 'website',
+        type: 'url',
+        label: 'Website URL',
+        placeholder: 'https://example.com',
+        validation: (value: string) => !value || /^https?:\/\/\S+$/.test(value),
+        errorMessage: 'Please enter a valid URL'
+      },
+      {
+        name: 'note',
+        type: 'textarea',
+        label: 'Note/Description',
+        placeholder: 'Additional information...'
       }
     ]
   },

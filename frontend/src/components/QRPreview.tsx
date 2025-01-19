@@ -60,12 +60,12 @@ const QRPreview: React.FC = () => {
 
   if (loading) {
     return (
-    <div className="flex flex-col items-center">
-      <div className="w-72 h-72 bg-white dark:bg-gray-800 rounded-xl shadow-lg flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-800"></div>
-        <div className="relative">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/30 border-t-blue-500"></div>
-          <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">Generating QR Code...</div>
+    <div className="flex flex-col items-center justify-center min-h-[400px]">
+      <div className="w-80 h-80 bg-white dark:bg-gray-800 rounded-2xl shadow-xl flex items-center justify-center p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-800 animate-pulse"></div>
+        <div className="relative flex flex-col items-center space-y-6">
+          <div className="animate-spin rounded-full h-20 w-20 border-[6px] border-blue-500/20 border-t-blue-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)]"></div>
+          <div className="text-sm text-gray-600 dark:text-gray-300 font-medium tracking-wide">Generating QR Code...</div>
         </div>
       </div>
     </div>
@@ -107,15 +107,17 @@ const QRPreview: React.FC = () => {
   }
 
   return (
-    <div className="text-center">
-      <img
-        src={qrCode}
-        alt="Generated QR Code"
-        className="w-80 h-80 mx-auto transform transition-transform duration-300 hover:scale-105"
-        style={{ backgroundColor: bgColor }}
-        data-testid="qr-code-preview"
-      />
-      <div className="mt-6 w-full max-w-sm space-y-4">
+    <div className="flex flex-col items-center space-y-8">
+      <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
+        <img
+          src={qrCode}
+          alt="Generated QR Code"
+          className="w-80 h-80 mx-auto transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          style={{ backgroundColor: bgColor }}
+          data-testid="qr-code-preview"
+        />
+      </div>
+      <div className="w-full max-w-md space-y-6 px-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
             <span>Quality</span>

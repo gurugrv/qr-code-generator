@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react';
+import { useAppDispatch } from '../store/store';
+import { setLogo } from '../features/qrConfig/qrConfigSlice';
 
 interface LogoUploaderProps {
-  onUpload: (logo: string) => void;
   disabled?: boolean;
 }
 
-const LogoUploader: React.FC<LogoUploaderProps> = ({ onUpload, disabled = false }) => {
+const LogoUploader: React.FC<LogoUploaderProps> = ({ disabled = false }) => {
+  const dispatch = useAppDispatch();
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (disabled) return;
@@ -15,13 +17,13 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onUpload, disabled = false 
         const reader = new FileReader();
         reader.onload = (e) => {
           if (e.target?.result) {
-            onUpload(e.target.result as string);
+            dispatch(setLogo(e.target.result as string));
           }
         };
         reader.readAsDataURL(file);
       }
     },
-    [onUpload, disabled]
+    [dispatch, disabled]
   );
 
   return (

@@ -20,6 +20,7 @@ export interface QRCustomization {
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
   size: number;
   margin: number;
+  logo?: string | null;
 }
 
 export const QRPatternTypeValues = {

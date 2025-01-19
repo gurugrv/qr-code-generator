@@ -5,6 +5,7 @@ interface SelectProps<T extends string> {
   value: T;
   options: T[];
   onChange: (value: T) => void;
+  placeholder?: string;
 }
 
 const Select = <T extends string>({ label, value, options, onChange }: SelectProps<T>) => {

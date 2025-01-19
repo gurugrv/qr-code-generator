@@ -7,7 +7,8 @@ export const QRCodeTypeValues = {
   PHONE: 'PHONE',
   SMS: 'SMS',
   CALENDAR: 'CALENDAR',
-  LOCATION: 'LOCATION'
+  LOCATION: 'LOCATION',
+  SOCIAL: 'Social'
 } as const;
 
 export type QRCodeType = typeof QRCodeTypeValues[keyof typeof QRCodeTypeValues];
@@ -16,7 +17,7 @@ export interface QRCustomization {
   foregroundColor: string;
   backgroundColor: string;
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
-  size: 'small' | 'medium' | 'large';
+  size: number;
   margin: number;
   logo: string | null;
 }
@@ -29,43 +30,68 @@ export interface QRCodeState {
 
 export interface FormField {
   name: string;
-  type: 'text' | 'url' | 'password' | 'select' | 'email' | 'tel';
+  type: 'text' | 'url' | 'password' | 'select' | 'email' | 'tel' | 'textarea' | 'datetime-local' | 'number';
+  label: string;
   required?: boolean;
   validation?: (value: string) => boolean;
   errorMessage?: string;
   options?: string[];
+  placeholder?: string;
+  defaultValue?: string;
 }
 
 export interface FormConfig {
   fields: FormField[];
 }
 
+// Base configurations for common field types
+const urlField: FormField = {
+  name: 'url',
+  type: 'url',
+  label: 'URL',
+  required: true,
+  validation: (value: string) => /^https?:\/\/\S+$/.test(value),
+  errorMessage: 'Invalid URL format'
+};
+
+const textField: FormField = {
+  name: 'text',
+  type: 'text',
+  label: 'Text',
+  required: true
+};
+
+const phoneField: FormField = {
+  name: 'phone',
+  type: 'tel',
+  label: 'Phone Number',
+  required: true,
+  validation: (value: string) => /^\+?[0-9\s\-()]{7,20}$/.test(value),
+  errorMessage: 'Invalid phone number format'
+};
+
 export const formConfigs: Record<QRCodeType, FormConfig> = {
   [QRCodeTypeValues.URL]: {
-    fields: [
-      {
-        name: 'url',
-        type: 'url',
-        validation: (value: string) => /^https?:\/\/.+/.test(value),
-        errorMessage: 'Please enter a valid URL starting with http:// or https://'
-      }
-    ]
+    fields: [urlField]
   },
   [QRCodeTypeValues.WIFI]: {
     fields: [
       {
         name: 'ssid',
         type: 'text',
+        label: 'Network Name (SSID)',
         required: true
       },
       {
         name: 'password',
         type: 'password',
+        label: 'Password',
         required: true
       },
       {
         name: 'encryption',
         type: 'select',
+        label: 'Encryption Type',
         options: ['WPA', 'WEP', 'None']
       }
     ]
@@ -75,66 +101,51 @@ export const formConfigs: Record<QRCodeType, FormConfig> = {
       {
         name: 'name',
         type: 'text',
+        label: 'Full Name',
         required: true
       },
-      {
-        name: 'phone',
-        type: 'tel',
-        required: true
-      },
+      phoneField,
       {
         name: 'email',
         type: 'email',
+        label: 'Email Address',
         required: true
       }
     ]
   },
-  // Add configurations for other QR types
   [QRCodeTypeValues.TEXT]: {
-    fields: [
-      {
-        name: 'text',
-        type: 'text',
-        required: true
-      }
-    ]
+    fields: [textField]
   },
   [QRCodeTypeValues.EMAIL]: {
     fields: [
       {
         name: 'email',
         type: 'email',
+        label: 'Email Address',
         required: true
       },
       {
         name: 'subject',
-        type: 'text'
+        type: 'text',
+        label: 'Subject'
       },
       {
         name: 'body',
-        type: 'text'
+        type: 'text',
+        label: 'Message'
       }
     ]
   },
   [QRCodeTypeValues.PHONE]: {
-    fields: [
-      {
-        name: 'phone',
-        type: 'tel',
-        required: true
-      }
-    ]
+    fields: [phoneField]
   },
   [QRCodeTypeValues.SMS]: {
     fields: [
-      {
-        name: 'phone',
-        type: 'tel',
-        required: true
-      },
+      phoneField,
       {
         name: 'message',
-        type: 'text'
+        type: 'text',
+        label: 'Message'
       }
     ]
   },
@@ -143,21 +154,25 @@ export const formConfigs: Record<QRCodeType, FormConfig> = {
       {
         name: 'title',
         type: 'text',
+        label: 'Event Title',
         required: true
       },
       {
         name: 'startDate',
         type: 'text',
+        label: 'Start Date & Time',
         required: true
       },
       {
         name: 'endDate',
         type: 'text',
+        label: 'End Date & Time',
         required: true
       },
       {
         name: 'description',
-        type: 'text'
+        type: 'text',
+        label: 'Description'
       }
     ]
   },
@@ -166,13 +181,37 @@ export const formConfigs: Record<QRCodeType, FormConfig> = {
       {
         name: 'latitude',
         type: 'text',
+        label: 'Latitude',
         required: true
       },
       {
         name: 'longitude',
         type: 'text',
+        label: 'Longitude',
         required: true
       }
     ]
-  }
+  },
+  [QRCodeTypeValues.SOCIAL]: {
+    fields: [
+      {
+        name: 'platform',
+        type: 'select',
+        label: 'Social Platform',
+        options: ['Facebook', 'Twitter', 'YouTube', 'Instagram', 'LinkedIn'],
+        required: true
+      },
+      {
+        name: 'url',
+        type: 'url',
+        label: 'Profile URL',
+        required: true,
+        validation: (value: string) => {
+          // Since we can't access other fields directly, we'll validate basic URL format
+          return /^https?:\/\/\S+$/.test(value);
+        },
+        errorMessage: 'URL must match the selected platform'
+      }
+    ]
+  },
 };

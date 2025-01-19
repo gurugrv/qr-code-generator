@@ -5,7 +5,7 @@ const isValidEmail = (email: string): boolean => {
 };
 
 const isValidPhoneNumber = (phone: string): boolean => {
-  return /^[+]?[\d\s-()]{8,}$/.test(phone);
+  return /^\+?[0-9\s\-()]{7,20}$/.test(phone);
 };
 
 const isValidDate = (date: string): boolean => {
@@ -25,8 +25,8 @@ export const validateQRInput = (
     if (!['L', 'M', 'Q', 'H'].includes(customization.errorCorrectionLevel)) {
       errors.push('Invalid error correction level');
     }
-    if (!['small', 'medium', 'large'].includes(customization.size)) {
-      errors.push('Invalid size value');
+    if (typeof customization.size !== 'number' || customization.size < 200 || customization.size > 2000) {
+      errors.push('Size must be between 200 and 2000 pixels');
     }
     if (typeof customization.margin !== 'number' || customization.margin < 0 || customization.margin > 10) {
       errors.push('Invalid margin value');
@@ -41,8 +41,9 @@ export const validateQRInput = (
 
   switch (type) {
     case QRCodeTypeValues.URL:
-      if (!data.url || !/^https?:\/\/.+/.test(data.url)) {
-        errors.push('Invalid URL format');
+    case QRCodeTypeValues.SOCIAL:
+      if (!data.content || typeof data.content !== 'string') {
+        errors.push('Content is required');
       }
       break;
       

@@ -1,99 +1,82 @@
-import React, { createContext, useReducer, useContext } from 'react';
-import { QRCodeTypeValues, QRCodeType, QRCodeState, QRCustomization } from '../types';
+import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import { QRCodeType, QRPatternType } from '../shared/types';
 
-interface QRCodeContextState {
+type QRCodeState = {
   type: QRCodeType;
-  data: Record<string, any>;
-  customization: QRCustomization;
+  data: {
+    content: string;
+    [key: string]: unknown;
+  };
+  customization: {
+    backgroundColor: string;
+    size: number;
+    margin: number;
+    foregroundColor: string;
+    logo: string | null;
+    patternType: QRPatternType;
+    patternColor: string;
+  };
   loading: boolean;
   error: string | null;
   qrCode: string | null;
-}
+};
 
-type Action =
+type QRCodeAction =
   | { type: 'SET_TYPE'; payload: QRCodeType }
-  | { type: 'UPDATE_DATA'; payload: Record<string, any> }
-  | { type: 'UPDATE_CUSTOMIZATION'; payload: Partial<QRCustomization> }
+  | { type: 'SET_DATA'; payload: { content: string; [key: string]: unknown } }
+  | { type: 'SET_CUSTOMIZATION'; payload: QRCodeState['customization'] }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'SET_QR_CODE'; payload: string | null }
-  | { type: 'RESET' };
+  | { type: 'SET_QR_CODE'; payload: string | null };
 
-const initialState: QRCodeContextState = {
-  type: QRCodeTypeValues.URL,
-  data: {},
+type QRCodeContextType = {
+  state: QRCodeState;
+  dispatch: React.Dispatch<QRCodeAction>;
+};
+
+const QRCodeContext = createContext<QRCodeContextType | undefined>(undefined);
+
+const initialState: QRCodeState = {
+  type: 'URL',
+  data: {
+    content: ''
+  },
   customization: {
-    foregroundColor: '#000000',
     backgroundColor: '#ffffff',
-    errorCorrectionLevel: 'H',
-    size: 'medium',
+    size: 300,
     margin: 4,
-    logo: null
+    foregroundColor: '#000000',
+    logo: null,
+    patternType: 'squares',
+    patternColor: '#000000'
   },
   loading: false,
   error: null,
   qrCode: null
 };
 
-const qrCodeReducer = (state: QRCodeContextState, action: Action): QRCodeContextState => {
+function qrCodeReducer(state: QRCodeState, action: QRCodeAction): QRCodeState {
   switch (action.type) {
     case 'SET_TYPE':
-      return {
-        ...state,
-        type: action.payload,
-        data: {}
-      };
-    case 'UPDATE_DATA':
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          ...action.payload
-        }
-      };
-    case 'UPDATE_CUSTOMIZATION':
-      return {
-        ...state,
-        customization: {
-          ...state.customization,
-          ...action.payload
-        }
-      };
+      return { ...state, type: action.payload };
+    case 'SET_DATA':
+      return { ...state, data: action.payload };
+    case 'SET_CUSTOMIZATION':
+      return { ...state, customization: action.payload };
     case 'SET_LOADING':
-      return {
-        ...state,
-        loading: action.payload,
-        error: null
-      };
+      return { ...state, loading: action.payload };
     case 'SET_ERROR':
-      return {
-        ...state,
-        error: action.payload,
-        loading: false
-      };
+      return { ...state, error: action.payload };
     case 'SET_QR_CODE':
-      return {
-        ...state,
-        qrCode: action.payload,
-        loading: false,
-        error: null
-      };
-    case 'RESET':
-      return initialState;
-    default:
-      return state;
+      return { ...state, qrCode: action.payload };
+    default: {
+      const _exhaustiveCheck: never = action;
+      throw new Error(`Unhandled action type: ${(_exhaustiveCheck as any).type}`);
+    }
   }
-};
+}
 
-const QRCodeContext = createContext<{
-  state: QRCodeContextState;
-  dispatch: React.Dispatch<Action>;
-}>({
-  state: initialState,
-  dispatch: () => null
-});
-
-export const QRCodeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function QRCodeProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(qrCodeReducer, initialState);
 
   return (
@@ -101,12 +84,12 @@ export const QRCodeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       {children}
     </QRCodeContext.Provider>
   );
-};
+}
 
-export const useQRCode = () => {
+export function useQRCode() {
   const context = useContext(QRCodeContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useQRCode must be used within a QRCodeProvider');
   }
   return context;
-};
+}

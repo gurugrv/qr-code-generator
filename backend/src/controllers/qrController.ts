@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import QRCode from 'qrcode';
 import { validateQRInput } from '../validators';
-import { generateQRCodeData, getQRCodeSize } from '../services/qrService';
+import { generateQRCodeData } from '../services/qrService';
 import { QRCodeType, QRCustomization } from '../shared/types';
 
 interface GenerateQRCodeRequest {
@@ -12,8 +12,22 @@ interface GenerateQRCodeRequest {
 
 export const generateQRCode = async (req: Request<{}, {}, GenerateQRCodeRequest>, res: Response) => {
   try {
+    if (!req.body) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Request body is required'
+      });
+    }
+
     const { type, data, customization } = req.body;
     
+    if (!type || !data || !customization) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required fields: type, data, or customization'
+      });
+    }
+
     // Validate input and customization
     const validationResult = validateQRInput(type, data, customization);
     if (!validationResult.success) {
@@ -35,7 +49,7 @@ export const generateQRCode = async (req: Request<{}, {}, GenerateQRCodeRequest>
           dark: customization.foregroundColor,
           light: customization.backgroundColor
         },
-        width: getQRCodeSize(customization.size)
+        width: customization.size
       });
       
       return res.json({

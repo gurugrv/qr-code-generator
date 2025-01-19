@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { QRCodeProvider } from './context/QRCodeContext';
+import React from 'react';
 import QRCodeGenerator from './components/QRCodeGenerator';
+import { useAppDispatch, useAppSelector } from './store/store';
+import { toggleDarkMode } from './features/userPreferences/userPreferencesSlice';
+import ToastsContainer from './components/Toasts';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  );
+  const dispatch = useAppDispatch();
+  const darkMode = useAppSelector(state => state.userPreferences.darkMode);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+  const handleToggleDarkMode = () => {
+    dispatch(toggleDarkMode());
     document.documentElement.classList.toggle('dark');
   };
 
   return (
-    <QRCodeProvider>
+    <>
       <div className="min-h-screen flex flex-col">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow">
@@ -23,7 +24,7 @@ function App() {
                 QR Code Generator
               </h1>
               <button
-                onClick={toggleDarkMode}
+                onClick={handleToggleDarkMode}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 {darkMode ? '☀️' : '🌙'}
@@ -50,7 +51,8 @@ function App() {
           </div>
         </footer>
       </div>
-    </QRCodeProvider>
+      <ToastsContainer />
+    </>
   );
 }
 

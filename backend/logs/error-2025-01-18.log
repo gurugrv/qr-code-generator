@@ -1,0 +1,114 @@
+2025-01-18 21:31:53 [error]: Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at errorHandler (D:\MAG Centre\qr-code-generator\backend\src\middleware\errorHandler.ts:42:27)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:280:10)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+{
+  "correlationId": "none",
+  "url": "/api/qr-code",
+  "method": "POST",
+  "statusCode": 500,
+  "stackTrace": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)",
+  "name": "Error"
+}
+2025-01-18 21:32:03 [error]: Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at errorHandler (D:\MAG Centre\qr-code-generator\backend\src\middleware\errorHandler.ts:42:27)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:280:10)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+{
+  "correlationId": "none",
+  "url": "/api/qr-code",
+  "method": "POST",
+  "statusCode": 500,
+  "stackTrace": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)",
+  "name": "Error"
+}
+2025-01-18 22:06:33 [error]: Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at errorHandler (D:\MAG Centre\qr-code-generator\backend\src\middleware\errorHandler.ts:42:27)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:280:10)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+{
+  "correlationId": "none",
+  "url": "/api/qr-code",
+  "method": "POST",
+  "statusCode": 500,
+  "stackTrace": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)",
+  "name": "Error"
+}
+2025-01-18 22:06:43 [error]: Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at errorHandler (D:\MAG Centre\qr-code-generator\backend\src\middleware\errorHandler.ts:42:27)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:280:10)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+{
+  "correlationId": "none",
+  "url": "/api/qr-code",
+  "method": "POST",
+  "statusCode": 500,
+  "stackTrace": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)",
+  "name": "Error"
+}
+2025-01-18 22:26:07 [error]: Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at errorHandler (D:\MAG Centre\qr-code-generator\backend\src\middleware\errorHandler.ts:42:27)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:280:10)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+{
+  "correlationId": "none",
+  "url": "/api/qr-code",
+  "method": "POST",
+  "statusCode": 500,
+  "stackTrace": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)",
+  "name": "Error"
+}
+2025-01-18 22:30:15 [error]: Error: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at errorHandler (D:\MAG Centre\qr-code-generator\backend\src\middleware\errorHandler.ts:42:27)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:280:10)
+    at Layer.handle_error (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:326:13)
+    at D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (D:\MAG Centre\qr-code-generator\backend\node_modules\express\lib\router\index.js:346:12)
+{
+  "correlationId": "none",
+  "url": "/api/qr-code",
+  "method": "POST",
+  "statusCode": 500,
+  "stackTrace": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\MAG Centre\\qr-code-generator\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)",
+  "name": "Error"
+}

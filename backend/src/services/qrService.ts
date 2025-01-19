@@ -32,14 +32,21 @@ END:VEVENT`;
     case QRCodeTypeValues.SMS:
       return `smsto:${data.phone}:${data.message || ''}`;
     
-    case QRCodeTypeValues.PHONE:
-      return `tel:${data.phone}`;
+    case QRCodeTypeValues.PHONE: {
+      // Validate phone number format
+      const phoneRegex = /^\+?[0-9\s\-()]{7,20}$/;
+      if (!phoneRegex.test(data.phone)) {
+        throw new Error('Invalid phone number format');
+      }
+      return `tel:${data.phone.replace(/[^0-9+]/g, '')}`;
+    }
     
     case QRCodeTypeValues.LOCATION:
       return `geo:${data.latitude},${data.longitude}`;
     
     case QRCodeTypeValues.URL:
-      return data.url;
+    case QRCodeTypeValues.SOCIAL:
+      return data.content;
     
     case QRCodeTypeValues.TEXT:
     default:
@@ -47,15 +54,6 @@ END:VEVENT`;
   }
 };
 
-export const getQRCodeSize = (size: 'small' | 'medium' | 'large'): number => {
-  switch (size) {
-    case 'small':
-      return 256;
-    case 'medium':
-      return 512;
-    case 'large':
-      return 1024;
-    default:
-      return 512;
-  }
+export const validateQRCodeSize = (size: number): boolean => {
+  return size > 0 && size <= 1000;
 };

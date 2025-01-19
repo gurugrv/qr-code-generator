@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^2.5.0",
+    "@sentry/react": "^8.50.0",
+    "@sentry/tracing": "^7.120.3",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -10,12 +16,18 @@
     "@types/node": "^16.18.36",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/redux-state-sync": "^3.1.10",
     "autoprefixer": "^10.4.14",
     "cra-template-typescript": "1.2.0",
     "postcss": "^8.4.21",
+    "qrcode": "^1.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^9.2.0",
     "react-scripts": "5.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-state-sync": "^3.1.4",
     "tailwindcss": "^3.3.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
@@ -26,12 +38,15 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:storybook/recommended"
     ]
   },
   "browserslist": {
@@ -47,7 +62,22 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@chromatic-com/storybook": "^3.2.4",
+    "@storybook/addon-essentials": "^8.5.0",
+    "@storybook/addon-interactions": "^8.5.0",
+    "@storybook/addon-onboarding": "^8.5.0",
+    "@storybook/blocks": "^8.5.0",
+    "@storybook/preset-create-react-app": "^8.5.0",
+    "@storybook/react": "^8.5.0",
+    "@storybook/react-webpack5": "^8.5.0",
+    "@storybook/test": "^8.5.0",
+    "@types/redux-logger": "^3.0.13",
+    "eslint-plugin-storybook": "^0.11.2",
     "jest-environment-jsdom": "^29.7.0",
-    "ts-jest": "^29.2.5"
+    "prop-types": "^15.8.1",
+    "storybook": "^8.5.0",
+    "ts-jest": "^29.2.5",
+    "webpack": "^5.97.1"
   }
 }

@@ -1,4 +1,4 @@
-import { QRCodeTypeValues } from '../types';
+import { QRCodeTypeValues, FormField } from '../types';
 
 export const formConfigs: Record<string, { fields: FormField[] }> = {
   [QRCodeTypeValues.URL]: {
@@ -8,8 +8,8 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         type: 'url',
         label: 'Enter URL',
         placeholder: 'https://example.com',
-        validation: (value: string) => /^https?:\/\/.+/.test(value),
-        errorMessage: 'Please enter a valid URL starting with http:// or https://'
+      validation: (value: string) => value.length > 0,
+      errorMessage: 'Please enter a URL'
       }
     ]
   },
@@ -106,7 +106,7 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         label: 'Phone Number',
         placeholder: '+1 234 567 890',
         required: true,
-        validation: (value: string) => /^[+]?[\d\s-()]+$/.test(value),
+        validation: (value: string) => /^\+?[0-9\s\-()]{7,20}$/.test(value),
         errorMessage: 'Please enter a valid phone number'
       }
     ]
@@ -119,7 +119,7 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         label: 'Phone Number',
         placeholder: '+1 234 567 890',
         required: true,
-        validation: (value: string) => /^[+]?[\d\s-()]+$/.test(value),
+        validation: (value: string) => /^\+?[0-9\s\-()]{7,20}$/.test(value),
         errorMessage: 'Please enter a valid phone number'
       },
       {
@@ -186,18 +186,34 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         errorMessage: 'Please enter a valid longitude (-180 to 180)'
       }
     ]
-  }
+  },
+  [QRCodeTypeValues.SOCIAL]: {
+    fields: [
+      {
+        name: 'platform',
+        type: 'select',
+        label: 'Social Platform',
+        options: ['Facebook', 'Twitter', 'Instagram', 'LinkedIn', 'YouTube', 'TikTok'],
+        required: true
+      },
+      {
+        name: 'url',
+        type: 'url',
+        label: 'Profile URL',
+        placeholder: 'https://example.com/profile',
+        required: true,
+        validation: (value: string) => /^https?:\/\/\S+$/.test(value),
+        errorMessage: 'Please enter a valid profile URL'
+      },
+      {
+        name: 'username',
+        type: 'text',
+        label: 'Username',
+        placeholder: 'yourusername',
+        required: false
+      }
+    ]
+  },
 };
 
 export type FormConfig = typeof formConfigs;
-export type FormField = {
-  name: string;
-  type: string;
-  label: string;
-  placeholder?: string;
-  required?: boolean;
-  validation?: (value: string) => boolean;
-  errorMessage?: string;
-  options?: string[];
-  defaultValue?: string;
-};

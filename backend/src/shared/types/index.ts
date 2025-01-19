@@ -7,7 +7,8 @@ export const QRCodeTypeValues = {
   PHONE: 'PHONE',
   SMS: 'SMS',
   CALENDAR: 'CALENDAR',
-  LOCATION: 'LOCATION'
+  LOCATION: 'LOCATION',
+  SOCIAL: 'SOCIAL'
 } as const;
 
 export type QRCodeType = typeof QRCodeTypeValues[keyof typeof QRCodeTypeValues];
@@ -16,7 +17,13 @@ export interface QRCustomization {
   foregroundColor: string;
   backgroundColor: string;
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
-  size: 'small' | 'medium' | 'large';
+  size: number;
   margin: number;
   logo: string | null;
+}
+
+export interface QRCodeState {
+  type: QRCodeType;
+  data: Record<string, any>;
+  customization: QRCustomization;
 }

@@ -17,21 +17,33 @@ const isValidUrl = (url: string): boolean => {
   }
 };
 
-export const validateQRContent = (content: string | { platform: string; url: string }, type: QRCodeType): boolean => {
+export const validateQRContent = (content: Record<string, any>, type: QRCodeType): boolean => {
   if (!content) return false;
 
   switch (type) {
     case 'URL':
-      return typeof content === 'string' && isValidUrl(content);
+      return !!content.url && isValidUrl(content.url);
     case 'EMAIL':
-      return typeof content === 'string' && isValidEmail(content);
+      return !!content.email && isValidEmail(content.email);
     case 'PHONE':
     case 'SMS':
-      return typeof content === 'string' && isValidPhoneNumber(content);
+      return !!content.phone && isValidPhoneNumber(content.phone);
     case 'TEXT':
-      return typeof content === 'string' && content.length > 0;
+      return !!content.text && content.text.length > 0;
+    case 'WIFI':
+      return !!content.ssid && content.ssid.length > 0;
+    case 'VCARD':
+      return !!content.name && content.name.length > 0;
+    case 'CALENDAR':
+      return !!content.title && !!content.startDate && !!content.endDate;
+    case 'LOCATION':
+      return content.latitude !== undefined && content.longitude !== undefined;
+    case 'SOCIAL':
+      return !!content.platform && !!content.url;
+    case 'UPI':
+      return !!content.vpa && !!content.name && /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(content.vpa);
     default:
-      return typeof content === 'string' && content.length > 0;
+      return false;
   }
 };
 
@@ -41,6 +53,6 @@ export const validateQRConfig = (config: QRConfigState): boolean => {
     config.customization.size <= 1000 &&
     /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(config.fgColor) &&
     /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(config.bgColor) &&
-    validateQRContent(config.content, config.type)
+    validateQRContent(config.contentByType[config.type], config.type)
   );
 };

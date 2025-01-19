@@ -9,7 +9,7 @@ interface QRConfigState {
   downloadSize: number;
   fgColor: string;
   bgColor: string;
-  contentByType: Record<QRCodeType, string | { platform: string; url: string }>;
+  contentByType: Record<QRCodeType, Record<string, any>>;
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
   type: QRCodeType;
   loading: boolean;
@@ -29,18 +29,24 @@ const initialState: QRConfigState = {
   fgColor: '#000000',
   bgColor: '#ffffff',
   contentByType: {
-    URL: '',
-    TEXT: '',
-    EMAIL: '',
-    PHONE: '',
-    WIFI: '',
-    VCARD: '',
-    SMS: '',
-    CALENDAR: '',
-    LOCATION: '',
-    Social: {
+    URL: { url: '' },
+    TEXT: { text: '' },
+    EMAIL: { email: '', subject: '', body: '' },
+    PHONE: { phone: '' },
+    WIFI: { ssid: '', password: '', encryption: 'WPA' },
+    VCARD: { name: '', phone: '', email: '' },
+    SMS: { phone: '', message: '' },
+    CALENDAR: { title: '', startDate: '', endDate: '', description: '' },
+    LOCATION: { latitude: 0, longitude: 0 },
+    SOCIAL: {
       platform: '',
-      url: ''
+      url: '',
+      username: ''
+    },
+    UPI: {
+      vpa: '',
+      name: '',
+      amount: ''
     }
   },
   errorCorrectionLevel: 'H',
@@ -79,7 +85,7 @@ export const generateQR = createAsyncThunk<QRCodeResponse, void, { state: RootSt
     const content = contentByType[type];
     
     if (!content || !validateQRContent(content, type)) {
-      return rejectWithValue('Text is required');
+      return rejectWithValue('Required fields are missing');
     }
     
     if (size <= 0 || size > 2000) {
@@ -90,43 +96,69 @@ export const generateQR = createAsyncThunk<QRCodeResponse, void, { state: RootSt
       const response = await generateQRCode({
         type,
         data: (() => {
-          const baseData: {
-            text?: string;
-            content?: string;
-            platform?: string;
-            email?: string;
-            phone?: string;
-          } = {};
-
           switch (type) {
             case 'TEXT':
-              baseData.text = content as string;
-              break;
+              return { text: content.text };
             case 'URL':
-              baseData.content = !(content as string).startsWith('http')
-                ? `https://${content}`
-                : content as string;
-              break;
+              const url = content.url.startsWith('http') ? content.url : `https://${content.url}`;
+              return { content: url };
             case 'EMAIL':
-              baseData.email = content as string;
-              break;
+              return {
+                email: content.email,
+                subject: content.subject,
+                body: content.body
+              };
             case 'PHONE': {
-              const phoneContent = content as string;
               const phoneRegex = /^\+?[0-9\s\-()]{7,20}$/;
-              if (!phoneRegex.test(phoneContent)) {
+              if (!phoneRegex.test(content.phone)) {
                 throw new Error('Invalid phone number format');
               }
-              baseData.phone = phoneContent.trim();
-              break;
+              return { phone: content.phone.trim() };
             }
+            case 'WIFI':
+              return {
+                ssid: content.ssid,
+                password: content.password,
+                encryption: content.encryption
+              };
+            case 'VCARD':
+              return {
+                name: content.name,
+                phone: content.phone,
+                email: content.email
+              };
             case 'SMS':
-              baseData.phone = content as string;
-              break;
+              return {
+                phone: content.phone,
+                message: content.message
+              };
+            case 'CALENDAR':
+              return {
+                title: content.title,
+                startDate: content.startDate,
+                endDate: content.endDate,
+                description: content.description
+              };
+            case 'LOCATION':
+              return {
+                latitude: content.latitude,
+                longitude: content.longitude
+              };
+            case 'SOCIAL':
+              return {
+                platform: content.platform,
+                url: content.url,
+                username: content.username
+              };
+            case 'UPI':
+              return {
+                vpa: content.vpa,
+                name: content.name,
+                amount: content.amount
+              };
             default:
-              baseData.content = content as string;
+              return content;
           }
-
-          return baseData;
         })(),
         customization: {
           size,
@@ -177,8 +209,11 @@ export const qrConfigSlice = createSlice({
     setBgColor: (state, action: PayloadAction<string>) => {
       state.bgColor = action.payload;
     },
-    setContent: (state, action: PayloadAction<string | { platform: string; url: string }>) => {
-      state.contentByType[state.type] = action.payload;
+    setContent: (state, action: PayloadAction<Record<string, any>>) => {
+      state.contentByType[state.type] = {
+        ...state.contentByType[state.type],
+        ...action.payload
+      };
     },
     setErrorCorrectionLevel: (
       state,

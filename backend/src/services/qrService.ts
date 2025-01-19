@@ -48,6 +48,19 @@ END:VEVENT`;
     case QRCodeTypeValues.SOCIAL:
       return data.content;
     
+    case QRCodeTypeValues.UPI:
+      const upiData = {
+        pa: data.vpa, // payee address (UPI ID)
+        pn: data.name, // payee name
+        am: data.amount || '', // amount (optional)
+        tn: 'Payment', // transaction note
+        cu: 'INR' // currency code
+      };
+      return `upi://pay?${Object.entries(upiData)
+        .filter(([_, value]) => value) // Remove empty values
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join('&')}`;
+    
     case QRCodeTypeValues.TEXT:
     default:
       return data.text || '';

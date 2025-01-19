@@ -32,6 +32,8 @@ interface GenerateQRCodeParams {
     description?: string;
     latitude?: number;
     longitude?: number;
+    vpa?: string;
+    amount?: number;
   };
   customization: {
     size: number;
@@ -88,6 +90,26 @@ export const generateQRCode = async (
       case 'SMS':
       case 'CALENDAR':
       case 'LOCATION':
+        requestData = {
+          type,
+          data: {
+            latitude: data.latitude,
+            longitude: data.longitude
+          },
+          customization
+        };
+        break;
+      case 'UPI':
+        requestData = {
+          type,
+          data: {
+            vpa: data.vpa,
+            name: data.name,
+            amount: data.amount
+          },
+          customization
+        };
+        break;
       default:
         requestData = {
           type,

@@ -12,7 +12,7 @@ import {
 const QRForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const { type, contentByType } = useAppSelector((state) => state.qrConfig);
-const content = contentByType[type] as string || '';
+const content = contentByType[type] || {};
   const formConfig = formConfigs[type];
 
   const validateForm = () => {
@@ -20,98 +20,40 @@ const content = contentByType[type] as string || '';
       return false;
     }
 
-    // Get the main field based on the current type
-    let mainField;
-    let validationValue: string;
-    
-    switch (type) {
-      case QRCodeTypeValues.URL:
-        mainField = formConfig.fields.find(f => f.name === 'url');
-        validationValue = content as string;
-        break;
-      case QRCodeTypeValues.TEXT:
-        mainField = formConfig.fields.find(f => f.name === 'text');
-        validationValue = content as string;
-        break;
-      case QRCodeTypeValues.EMAIL:
-        mainField = formConfig.fields.find(f => f.name === 'email');
-        validationValue = content as string;
-        break;
-      case QRCodeTypeValues.PHONE:
-        mainField = formConfig.fields.find(f => f.name === 'phone');
-        validationValue = content as string;
-        break;
-      case QRCodeTypeValues.WIFI:
-        mainField = formConfig.fields.find(f => f.name === 'ssid');
-        validationValue = content as string;
-        break;
-      case QRCodeTypeValues.VCARD:
-        mainField = formConfig.fields.find(f => f.name === 'name');
-        validationValue = content as string;
-        break;
-      default:
+    // Validate all required fields
+    for (const field of formConfig.fields) {
+      if (field.required && !content[field.name]) {
         return false;
-    }
-
-    if (!mainField) {
-      return false;
-    }
-
-    if (mainField.validation && !mainField.validation(validationValue)) {
-      return false;
+      }
+      
+      if (field.validation && !field.validation(content[field.name] || '')) {
+        return false;
+      }
     }
 
     return true;
   };
 
   const handleInputChange = (field: string, value: string) => {
-    // Update the content based on the field type
-    switch (type as QRCodeType) {
-      case QRCodeTypeValues.URL:
-        if (field === 'url') {
-          dispatch(setContent(value));
-          dispatch(setError(null)); // Clear any previous errors
-        }
-        break;
-      case QRCodeTypeValues.TEXT:
-        if (field === 'text') {
-          dispatch(setContent(value));
-          dispatch(setError(null));
-        }
-        break;
-      case QRCodeTypeValues.EMAIL:
-        if (field === 'email') {
-          dispatch(setContent(value));
-          dispatch(setError(null));
-        }
-        break;
-      case QRCodeTypeValues.PHONE:
-        if (field === 'phone') {
-          dispatch(setContent(value));
-          dispatch(setError(null));
-        }
-        break;
-      case QRCodeTypeValues.WIFI:
-        if (field === 'ssid') {
-          dispatch(setContent(value));
-          dispatch(setError(null));
-        }
-        break;
-      case QRCodeTypeValues.VCARD:
-        if (field === 'name') {
-          dispatch(setContent(value));
-          dispatch(setError(null));
-        }
-        break;
-      default:
-        break;
-    }
+    const currentContent = contentByType[type] || {};
+    dispatch(setContent({
+      ...currentContent,
+      [field]: value
+    }));
+    dispatch(setError(null)); // Clear any previous errors
   };
 
   const handleGenerate = () => {
     if (!validateForm()) {
-      const mainField = formConfig.fields[0];
-      dispatch(setError(mainField.errorMessage || 'Invalid input'));
+      const errors = formConfig.fields
+        .filter(field => {
+          const value = content[field.name] || '';
+          return (field.required && !value) ||
+                 (field.validation && !field.validation(value));
+        })
+        .map(field => field.errorMessage || `${field.label} is required`);
+      
+      dispatch(setError(errors.join(', ')));
       return;
     }
     dispatch(generateQR());
@@ -121,29 +63,7 @@ const content = contentByType[type] as string || '';
     <div className="space-y-6">
       <div className="space-y-4">
         {formConfig.fields.map((field) => {
-          let value = '';
-          switch (type) {
-            case QRCodeTypeValues.URL:
-              value = field.name === 'url' ? (content as string) : '';
-              break;
-            case QRCodeTypeValues.TEXT:
-              value = field.name === 'text' ? (content as string) : '';
-              break;
-            case QRCodeTypeValues.EMAIL:
-              value = field.name === 'email' ? (content as string) : '';
-              break;
-            case QRCodeTypeValues.PHONE:
-              value = field.name === 'phone' ? (content as string) : '';
-              break;
-            case QRCodeTypeValues.WIFI:
-              value = field.name === 'ssid' ? (content as string) : '';
-              break;
-            case QRCodeTypeValues.VCARD:
-              value = field.name === 'name' ? (content as string) : '';
-              break;
-            default:
-              value = '';
-          }
+          const value = content[field.name] || '';
           const isValid = !field.validation || field.validation(value);
           const isRequiredError = field.required && !value;
           

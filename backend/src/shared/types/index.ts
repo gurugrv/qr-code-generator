@@ -8,7 +8,8 @@ export const QRCodeTypeValues = {
   SMS: 'SMS',
   CALENDAR: 'CALENDAR',
   LOCATION: 'LOCATION',
-  SOCIAL: 'SOCIAL'
+  SOCIAL: 'SOCIAL',
+  UPI: 'UPI'
 } as const;
 
 export type QRCodeType = typeof QRCodeTypeValues[keyof typeof QRCodeTypeValues];

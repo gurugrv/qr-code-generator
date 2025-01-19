@@ -107,20 +107,14 @@ const QRPreview: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <div
-        className="w-96 h-96 rounded-xl shadow-lg relative overflow-hidden group"
+    <div className="text-center">
+      <img
+        src={qrCode}
+        alt="Generated QR Code"
+        className="w-80 h-80 mx-auto transform transition-transform duration-300 hover:scale-105"
         style={{ backgroundColor: bgColor }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img
-            src={qrCode}
-            alt="Generated QR Code"
-            className="w-80 h-80 transform transition-transform duration-300 group-hover:scale-105"
-            data-testid="qr-code-preview"
-          />
-        </div>
-      </div>
+        data-testid="qr-code-preview"
+      />
       <div className="mt-6 w-full max-w-sm space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">

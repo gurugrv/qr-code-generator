@@ -8,6 +8,15 @@ const isValidPhoneNumber = (phone: string): boolean => {
   return /^\+?[0-9\s\-()]{7,20}$/.test(phone);
 };
 
+const isValidUpiId = (vpa: string): boolean => {
+  return /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(vpa);
+};
+
+const isValidAmount = (amount: string | number): boolean => {
+  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+  return !isNaN(num) && num >= 0;
+};
+
 const isValidDate = (date: string): boolean => {
   const d = new Date(date);
   return d instanceof Date && !isNaN(d.getTime());
@@ -116,6 +125,18 @@ export const validateQRInput = (
       }
       if (typeof data.longitude !== 'number' || data.longitude < -180 || data.longitude > 180) {
         errors.push('Valid longitude is required (-180 to 180)');
+      }
+      break;
+
+    case QRCodeTypeValues.UPI:
+      if (!data.vpa || !isValidUpiId(data.vpa)) {
+        errors.push('Valid UPI ID is required');
+      }
+      if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
+        errors.push('Payee name is required');
+      }
+      if (data.amount && !isValidAmount(data.amount)) {
+        errors.push('Amount must be a valid non-negative number');
       }
       break;
       

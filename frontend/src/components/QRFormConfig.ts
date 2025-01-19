@@ -214,6 +214,38 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
       }
     ]
   },
+  [QRCodeTypeValues.UPI]: {
+    fields: [
+      {
+        name: 'vpa',
+        type: 'text',
+        label: 'UPI ID',
+        placeholder: 'username@upi',
+        required: true,
+        validation: (value: string) => /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(value),
+        errorMessage: 'Please enter a valid UPI ID'
+      },
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Payee Name',
+        placeholder: 'John Doe',
+        required: true
+      },
+      {
+        name: 'amount',
+        type: 'number',
+        label: 'Amount (₹)',
+        placeholder: '0.00',
+        validation: (value: string) => {
+          if (!value) return true;
+          const num = parseFloat(value);
+          return !isNaN(num) && num >= 0;
+        },
+        errorMessage: 'Please enter a valid amount'
+      }
+    ]
+  },
 };
 
 export type FormConfig = typeof formConfigs;

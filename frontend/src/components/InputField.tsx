@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormField } from '../types';
-
 interface InputFieldProps {
   field: FormField;
   value: string;
@@ -17,9 +16,23 @@ const InputField: React.FC<InputFieldProps> = ({
   errorMessage
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [inputValue, setInputValue] = useState(value);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    onChange(e.target.value);
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    onChange(newValue);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    if (inputValue !== value) {
+      onChange(inputValue);
+    }
   };
 
   const getInputIcon = () => {
@@ -71,7 +84,7 @@ const InputField: React.FC<InputFieldProps> = ({
               value={value}
               onChange={handleChange}
               onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onBlur={handleBlur}
               className={`${baseInputClasses} appearance-none`}
             >
               <option value="" disabled hidden>
@@ -103,7 +116,7 @@ const InputField: React.FC<InputFieldProps> = ({
                 value={value}
                 onChange={handleChange}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+              onBlur={handleBlur}
                 className={`${baseInputClasses} min-h-[120px] resize-y pl-10`}
                 required={field.required}
                 placeholder={field.label}
@@ -122,7 +135,7 @@ const InputField: React.FC<InputFieldProps> = ({
               value={value}
               onChange={handleChange}
               onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onBlur={handleBlur}
               className={`${baseInputClasses} px-3 pl-10`}
               required={field.required}
               placeholder={field.label}

@@ -12,18 +12,8 @@ const CustomizationPanel: React.FC = () => {
   const bgColor = useAppSelector((state) => state.qrConfig.bgColor);
   const size = useAppSelector((state) => state.qrConfig.size);
 
-  const debouncedFgColor = useDebounce(fgColor, 500);
-  const debouncedBgColor = useDebounce(bgColor, 500);
-  const debouncedSize = useDebounce(size, 500);
-
   const { contentByType, type, qrCode } = useAppSelector(selectQRConfig);
   const content = contentByType[type];
-
-  useEffect(() => {
-    if (content) {
-      dispatch(generateQR());
-    }
-  }, [debouncedFgColor, debouncedBgColor, debouncedSize, dispatch, content]);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-2 border-gray-100 dark:border-gray-700">
@@ -45,7 +35,7 @@ const CustomizationPanel: React.FC = () => {
         </div>
         
 
-        <div className="pt-4 border-t-2 border-gray-100 dark:border-gray-700">
+        <div className="pt-4 border-t-2 border-gray-100 dark:border-gray-700 space-y-4">
           <LogoUploader
             onUpload={(logo: string) => {
               // Logo handling will be implemented in a future update
@@ -53,6 +43,29 @@ const CustomizationPanel: React.FC = () => {
             }}
             disabled={loading}
           />
+          
+          <button
+            onClick={() => dispatch(generateQR())}
+            disabled={loading || !content}
+            className="
+              w-full py-2 px-4 rounded-lg font-medium text-white
+              bg-gradient-to-r from-green-500 to-green-600
+              hover:from-green-600 hover:to-green-700
+              active:from-green-700 active:to-green-800
+              disabled:from-gray-400 disabled:to-gray-500
+              transform transition-all duration-200
+              hover:scale-[1.02] active:scale-[0.98]
+              focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
+              shadow-md hover:shadow-lg
+              disabled:cursor-not-allowed
+              flex items-center justify-center space-x-2
+            "
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Apply Changes</span>
+          </button>
         </div>
       </div>
     </div>

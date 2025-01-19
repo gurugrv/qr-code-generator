@@ -1,5 +1,7 @@
 # QR Code Generator
 
+A full-stack QR code generator application with a React frontend and Express.js backend.
+
 ## Table of Contents
 - [Features](#features)
 - [Supported QR Code Types](#supported-qr-code-types)
@@ -21,8 +23,6 @@
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
-
-A full-stack QR code generator application with a React frontend and Express.js backend.
 
 ## Features
 
@@ -86,24 +86,45 @@ The application supports generating the following types of QR codes:
 ## Technology Stack
 
 ### Frontend
-- React 18 with TypeScript
-- Tailwind CSS for styling
-- Redux Toolkit for state management
-- Context API for local state
-- Jest and React Testing Library for testing
-- Axios for API communication
-- React Hook Form for form management
-- Storybook for component development
+- React 18.2.0 with TypeScript 4.9.5
+- Redux Toolkit 2.5.0 for state management
+  - Redux Persist for state persistence
+  - Redux State Sync for cross-tab state synchronization
+  - Redux Logger for development debugging
+- Tailwind CSS 3.3.2 with plugins:
+  - @tailwindcss/forms
+  - @tailwindcss/typography
+  - @tailwindcss/aspect-ratio
+- Sentry 8.50.0 for error tracking and performance monitoring
+- Jest 29.7.0 and React Testing Library for testing
+- Storybook 8.5.0 for component development and documentation
+- QRCode 1.5.4 for QR code generation
+- Web Vitals for performance monitoring
 
 ### Backend
-- Express.js with TypeScript
-- QRCode library for QR generation
-- Rate limiting middleware
-- CORS support
-- Comprehensive error handling middleware
-- Zod for request validation
-- Winston for logging
-- Jest for testing
+- Express.js 4.18.2 with TypeScript 5.2.2
+- QRCode 1.5.4 for QR code generation
+- Express Rate Limit 7.5.0 for API protection
+- Winston 3.17.0 with daily rotate file for logging
+- CORS 2.8.5 for cross-origin resource sharing
+- Body Parser for request parsing
+- Jest 29.7.0 for testing
+- Nodemon 3.1.9 for development
+
+## Environment Requirements
+
+- Node.js v18.x or higher
+- npm v9.x or higher
+- Git 2.x or higher
+- Recommended IDE: Visual Studio Code with the following extensions:
+  - ESLint
+  - Prettier
+  - Tailwind CSS IntelliSense
+  - TypeScript and JavaScript Language Features
+  - Jest Runner
+  - Error Lens
+  - GitLens
+  - Storybook Snippets
 
 ## Installation
 
@@ -155,6 +176,24 @@ cd frontend
 npm run storybook
 ```
 
+### Testing
+
+Run tests for both frontend and backend:
+
+```bash
+# Frontend tests
+cd frontend
+npm run test           # Run tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage
+
+# Backend tests
+cd backend
+npm run test           # Run tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage
+```
+
 ### Production
 
 1. Build the frontend:
@@ -163,13 +202,17 @@ cd frontend
 npm run build
 ```
 
-2. Start the backend server:
+2. Build the backend:
+```bash
+cd backend
+npm run build
+```
+
+3. Start the production server:
 ```bash
 cd backend
 npm start
 ```
-
-## API Documentation
 
 ### POST /api/qr-code
 Generate a QR code
@@ -409,82 +452,6 @@ qr-code-generator/
 ├── shared/
 ```
 
-## Testing
-
-Run tests for both frontend and backend:
-
-```bash
-# Frontend tests
-cd frontend
-npm test
-
-# Backend tests
-cd backend
-npm test
-
-# Run all tests with coverage
-cd frontend && npm test -- --coverage
-cd ../backend && npm test -- --coverage
-```
-
-### Testing Strategy
-
-- **Frontend:**
-  - Component rendering tests
-  - Form validation tests
-  - Redux slice tests
-  - Context API tests
-  - Integration tests for API calls
-  - Snapshot testing for UI components
-  - Storybook interaction tests
-
-- **Backend:**
-  - API endpoint tests
-  - QR code generation tests
-  - Validation tests
-  - Error handling tests
-  - Middleware tests
-  - Rate limiting tests
-
-### Example Test Cases
-
-**Frontend:**
-```typescript
-// QRCodeGenerator.test.tsx
-test('renders QR code preview when data is provided', () => {
-  render(<QRCodeGenerator data="https://example.com" />);
-  expect(screen.getByTestId('qr-preview')).toBeInTheDocument();
-});
-
-test('shows error message when invalid URL is entered', () => {
-  render(<QRCodeGenerator />);
-  const input = screen.getByLabelText('URL');
-  fireEvent.change(input, { target: { value: 'invalid-url' } });
-  expect(screen.getByText('Invalid URL')).toBeInTheDocument();
-});
-```
-
-**Backend:**
-```typescript
-// qrController.test.ts
-test('returns 400 for invalid QR code data', async () => {
-  const response = await request(app)
-    .post('/api/qr-code')
-    .send({ data: '', options: { type: 'url' } });
-  expect(response.status).toBe(400);
-  expect(response.body.error.code).toBe('VALIDATION_ERROR');
-});
-
-test('returns 429 when rate limit is exceeded', async () => {
-  for (let i = 0; i < 101; i++) {
-    await request(app).post('/api/qr-code').send(validRequest);
-  }
-  const response = await request(app).post('/api/qr-code').send(validRequest);
-  expect(response.status).toBe(429);
-  expect(response.body.error.code).toBe('RATE_LIMIT_EXCEEDED');
-});
-```
-
 ## Error Handling
 
 The application implements comprehensive error handling:
@@ -493,15 +460,21 @@ The application implements comprehensive error handling:
 - Error boundary for React components
 - Redux error handling middleware
 - Toast notifications for user feedback
-- Error reporting service
+- Sentry integration for error tracking and monitoring
+  - Automatic error capturing
+  - Performance monitoring
+  - Release tracking
+  - User feedback collection
 - Form validation errors
+- Cross-tab error synchronization
 
 ### Backend
 - Custom error classes (HttpError, ValidationError, QRGenerationError)
 - Error handling middleware
 - Rate limiting
 - Request validation
-- Winston logging
+- Winston logging with daily rotation
+- Structured error responses
 
 ### Error Handling Examples
 
@@ -621,13 +594,6 @@ MIT License
 Copyright (c) 2025 Your Name
 
 Permission is hereby granted...
-
-## Environment Requirements
-
-- Node.js v18.x or higher
-- npm v9.x or higher
-- Git 2.x or higher
-- Recommended IDE: Visual Studio Code with ESLint and Prettier extensions
 
 ## Development Workflow
 

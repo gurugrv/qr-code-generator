@@ -7,9 +7,9 @@ export const QRCodeTypeValues = {
   PHONE: 'PHONE',
   SMS: 'SMS',
   CALENDAR: 'CALENDAR',
-  LOCATION: 'LOCATION',
   SOCIAL: 'SOCIAL',
-  UPI: 'UPI'
+  UPI: 'UPI',
+  LOCATION: 'LOCATION'
 } as const;
 
 export type QRCodeType = typeof QRCodeTypeValues[keyof typeof QRCodeTypeValues];
@@ -31,7 +31,7 @@ export interface QRCodeState {
 
 export interface FormField {
   name: string;
-  type: 'text' | 'url' | 'password' | 'select' | 'email' | 'tel' | 'textarea' | 'datetime-local' | 'number';
+  type: 'text' | 'url' | 'password' | 'select' | 'email' | 'tel' | 'textarea' | 'datetime-local' | 'number' | 'custom';
   label: string;
   required?: boolean;
   validation?: (value: string) => boolean;
@@ -39,6 +39,7 @@ export interface FormField {
   options?: string[];
   placeholder?: string;
   defaultValue?: string;
+  component?: React.ComponentType<any>;
 }
 
 export interface FormConfig {
@@ -177,22 +178,6 @@ export const formConfigs: Record<QRCodeType, FormConfig> = {
       }
     ]
   },
-  [QRCodeTypeValues.LOCATION]: {
-    fields: [
-      {
-        name: 'latitude',
-        type: 'text',
-        label: 'Latitude',
-        required: true
-      },
-      {
-        name: 'longitude',
-        type: 'text',
-        label: 'Longitude',
-        required: true
-      }
-    ]
-  },
   [QRCodeTypeValues.SOCIAL]: {
     fields: [
       {
@@ -243,6 +228,43 @@ export const formConfigs: Record<QRCodeType, FormConfig> = {
           return !isNaN(num) && num >= 0;
         },
         errorMessage: 'Please enter a valid amount'
+      }
+    ]
+  },
+  [QRCodeTypeValues.LOCATION]: {
+    fields: [
+      {
+        name: 'latitude',
+        type: 'number',
+        label: 'Latitude',
+        placeholder: '0.000000',
+        required: true,
+        validation: (value: string) => {
+          const num = parseFloat(value);
+          return !isNaN(num) && num >= -90 && num <= 90;
+        },
+        errorMessage: 'Please enter a valid latitude (-90 to 90)'
+      },
+      {
+        name: 'longitude',
+        type: 'number',
+        label: 'Longitude',
+        placeholder: '0.000000',
+        required: true,
+        validation: (value: string) => {
+          const num = parseFloat(value);
+          return !isNaN(num) && num >= -180 && num <= 180;
+        },
+        errorMessage: 'Please enter a valid longitude (-180 to 180)'
+      },
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Location Name',
+        placeholder: 'My Favorite Place',
+        required: false,
+        validation: (value: string) => !value || value.length <= 128,
+        errorMessage: 'Location name must be 128 characters or less'
       }
     ]
   }

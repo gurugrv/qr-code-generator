@@ -19,6 +19,14 @@ export const validateUrl = (url: string): boolean => {
   }
 };
 
+export const validateLatitude = (lat: number): boolean => {
+  return !isNaN(lat) && lat >= -90 && lat <= 90;
+};
+
+export const validateLongitude = (lng: number): boolean => {
+  return !isNaN(lng) && lng >= -180 && lng <= 180;
+};
+
 export const validateQRContent = (content: Record<string, any>, type: QRCodeType): boolean => {
   switch (type) {
     case 'URL':
@@ -37,13 +45,15 @@ export const validateQRContent = (content: Record<string, any>, type: QRCodeType
       return !!content.phone && validatePhoneNumber(content.phone);
     case 'CALENDAR':
       return !!content.title && content.title.trim().length > 0;
-    case 'LOCATION':
-      return typeof content.latitude === 'number' &&
-             typeof content.longitude === 'number';
     case 'SOCIAL':
       return !!content.platform && content.platform.trim().length > 0;
     case 'UPI':
       return !!content.vpa && content.vpa.trim().length > 0;
+    case 'LOCATION':
+      return typeof content.latitude === 'number' &&
+             typeof content.longitude === 'number' &&
+             validateLatitude(content.latitude) &&
+             validateLongitude(content.longitude);
     default:
       return false;
   }

@@ -78,6 +78,7 @@
     "@storybook/react": "^8.5.0",
     "@storybook/react-webpack5": "^8.5.0",
     "@storybook/test": "^8.5.0",
+    "@types/google.maps": "^3.58.1",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@types/redux-logger": "^3.0.13",

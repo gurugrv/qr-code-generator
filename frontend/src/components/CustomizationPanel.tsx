@@ -110,12 +110,12 @@ const CustomizationPanel: React.FC = () => {
             <Tooltip content="Generate QR code with current customization settings">
               <button
                 onClick={() => {
-                  dispatch(generateQR());
+                  dispatch(generateQR(content));
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    dispatch(generateQR());
+                    dispatch(generateQR(content));
                   }
                 }}
                 disabled={loading || !content}

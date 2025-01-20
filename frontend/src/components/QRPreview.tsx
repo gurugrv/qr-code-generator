@@ -31,24 +31,26 @@ const QRPreview: React.FC<QRPreviewProps> = ({ onImageRefChange }) => {
   const content = useAppSelector(state => state.qrConfig.contentByType[type]);
 
   const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    const img = imgRef.current;
-    if (!img) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      // Empty callback to prevent the warning
-    });
-
-    resizeObserver.observe(img);
-    onImageRefChange?.(img);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [onImageRefChange]);
-
   const previewRef = useRef<HTMLDivElement>(null);
+  
+  // Keep track of the last valid QR code
+  const [lastValidQRCode, setLastValidQRCode] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (qrCode) {
+      setLastValidQRCode(qrCode);
+    }
+  }, [qrCode]);
+
+  // Simple ref effect without ResizeObserver
+  useEffect(() => {
+    if (imgRef.current) {
+      onImageRefChange?.(imgRef.current);
+    }
+    return () => {
+      onImageRefChange?.(null);
+    };
+  }, [onImageRefChange, qrCode]); // Include qrCode in deps to ensure ref updates when QR changes
 
   // Focus management when QR code is generated
   useEffect(() => {
@@ -104,7 +106,7 @@ const QRPreview: React.FC<QRPreviewProps> = ({ onImageRefChange }) => {
     );
   }
 
-  if (!qrCode) {
+  if (!qrCode && !lastValidQRCode) {
     return (
       <div className={wrapperClasses}>
         <div className={containerClasses}>
@@ -156,6 +158,9 @@ const QRPreview: React.FC<QRPreviewProps> = ({ onImageRefChange }) => {
     );
   }
 
+  const currentQRCode = qrCode || lastValidQRCode;
+  const imageKey = currentQRCode || 'placeholder';
+
   return (
     <div className={wrapperClasses}>
       <div className={containerClasses}>
@@ -167,17 +172,27 @@ const QRPreview: React.FC<QRPreviewProps> = ({ onImageRefChange }) => {
           aria-label="QR Code Preview"
         >
           <div className="w-full h-full flex items-center justify-center">
-            <img
-              ref={imgRef}
-              src={qrCode}
-              alt="Generated QR Code"
-              className="w-[98%] aspect-square object-contain transform transition-all duration-300 hover:scale-105"
-              style={{ backgroundColor: bgColor }}
-              data-testid="qr-code-preview"
-              loading="eager"
-              role="img"
-              aria-label="Generated QR Code Preview"
-            />
+            {currentQRCode && (
+              <img
+                key={imageKey}
+                ref={imgRef}
+                src={currentQRCode}
+                alt="Generated QR Code"
+                className={`w-[98%] aspect-square object-contain transform transition-all duration-300 hover:scale-105 ${
+                  !qrCode ? 'opacity-50' : ''
+                }`}
+                style={{ backgroundColor: bgColor }}
+                data-testid="qr-code-preview"
+                loading="eager"
+                role="img"
+                aria-label="Generated QR Code Preview"
+                onLoad={() => {
+                  if (qrCode && imgRef.current) {
+                    onImageRefChange?.(imgRef.current);
+                  }
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

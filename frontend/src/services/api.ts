@@ -33,10 +33,10 @@ interface GenerateQRCodeParams {
     endDate?: string;
     description?: string;
     message?: string;
-    latitude?: number;
-    longitude?: number;
     vpa?: string;
     amount?: number;
+    latitude?: number;
+    longitude?: number;
   };
   customization: {
     size: number;
@@ -138,17 +138,6 @@ export const generateQRCode = async (
           customization
         };
         break;
-      case 'LOCATION':
-        requestData = {
-          type,
-          data: {
-            latitude: data.latitude,
-            longitude: data.longitude,
-            name: data.name
-          },
-          customization
-        };
-        break;
       case 'UPI':
         requestData = {
           type,
@@ -156,6 +145,16 @@ export const generateQRCode = async (
             vpa: data.vpa,
             name: data.name,
             amount: data.amount
+          },
+          customization
+        };
+        break;
+      case 'LOCATION':
+        requestData = {
+          type,
+          data: {
+            latitude: data.latitude,
+            longitude: data.longitude
           },
           customization
         };

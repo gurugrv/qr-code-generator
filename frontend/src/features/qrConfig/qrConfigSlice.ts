@@ -50,7 +50,6 @@ const initialState: QRConfigState = {
     },
     SMS: { phone: '', message: '' },
     CALENDAR: { title: '', startDate: '', endDate: '', description: '' },
-    LOCATION: { latitude: 0, longitude: 0 },
     SOCIAL: {
       platform: '',
       url: '',
@@ -60,6 +59,11 @@ const initialState: QRConfigState = {
       vpa: '',
       name: '',
       amount: ''
+    },
+    LOCATION: {
+      latitude: 0,
+      longitude: 0,
+      name: ''
     }
   },
   errorCorrectionLevel: 'H',
@@ -91,7 +95,7 @@ interface QRCodeResponse {
   };
 }
 
-export const generateQR = createAsyncThunk<QRCodeResponse, void, { state: RootState }>(
+export const generateQR = createAsyncThunk<QRCodeResponse, Record<string, any>, { state: RootState }>(
   'qrConfig/generateQR',
   async (_, { getState, rejectWithValue }) => {
     const state = getState();
@@ -164,11 +168,6 @@ export const generateQR = createAsyncThunk<QRCodeResponse, void, { state: RootSt
                 endDate: content.endDate,
                 description: content.description
               };
-            case 'LOCATION':
-              return {
-                latitude: content.latitude,
-                longitude: content.longitude
-              };
             case 'SOCIAL':
               return {
                 platform: content.platform,
@@ -236,10 +235,44 @@ export const qrConfigSlice = createSlice({
       state.bgColor = action.payload;
     },
     setContent: (state, action: PayloadAction<Record<string, any>>) => {
-      state.contentByType[state.type] = {
-        ...state.contentByType[state.type],
-        ...action.payload
-      };
+      const currentContent = state.contentByType[state.type];
+      const newContent = action.payload;
+      
+      // Only update if values actually changed
+      const shouldUpdate = Object.keys(newContent).some(
+        key => currentContent[key] !== newContent[key]
+      );
+      
+      if (shouldUpdate) {
+        state.contentByType[state.type] = {
+          ...currentContent,
+          ...newContent
+        };
+      }
+    },
+    setLocationContent: (state, action: PayloadAction<{name?: string, latitude?: number, longitude?: number}>) => {
+      if (state.type !== 'LOCATION') return;
+      
+      const currentContent = state.contentByType[state.type];
+      const { name, latitude, longitude } = action.payload;
+      
+      const updates: Record<string, any> = {};
+      if (name !== undefined && currentContent.name !== name) {
+        updates.name = name;
+      }
+      if (latitude !== undefined && currentContent.latitude !== latitude) {
+        updates.latitude = latitude;
+      }
+      if (longitude !== undefined && currentContent.longitude !== longitude) {
+        updates.longitude = longitude;
+      }
+      
+      if (Object.keys(updates).length > 0) {
+        state.contentByType[state.type] = {
+          ...currentContent,
+          ...updates
+        };
+      }
     },
     setErrorCorrectionLevel: (
       state,
@@ -315,6 +348,7 @@ export const {
   updateQRConfig,
   toggleCustomPattern,
   setLogo,
+  setLocationContent,
 } = qrConfigSlice.actions;
 
 export const selectQRConfig = (state: RootState) => state.qrConfig;

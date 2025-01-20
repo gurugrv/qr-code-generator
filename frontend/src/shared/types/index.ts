@@ -7,12 +7,35 @@ export const QRCodeTypeValues = {
   PHONE: 'PHONE',
   SMS: 'SMS',
   CALENDAR: 'CALENDAR',
-  LOCATION: 'LOCATION',
   SOCIAL: 'SOCIAL',
-  UPI: 'UPI'
+  UPI: 'UPI',
+  LOCATION: 'LOCATION'
 } as const;
 
 export type QRCodeType = typeof QRCodeTypeValues[keyof typeof QRCodeTypeValues];
+
+/**
+ * Location data structure for geo coordinates
+ */
+export interface LocationData {
+  /** Latitude in decimal degrees */
+  latitude: number;
+  /** Longitude in decimal degrees */
+  longitude: number;
+  /** Optional location name or description */
+  name?: string;
+}
+
+/**
+ * Type guard for LocationData
+ */
+export function isLocationData(data: unknown): data is LocationData {
+  const d = data as LocationData;
+  return typeof d?.latitude === 'number' &&
+    typeof d?.longitude === 'number' &&
+    d.latitude >= -90 && d.latitude <= 90 &&
+    d.longitude >= -180 && d.longitude <= 180;
+}
 
 export interface QRCustomization {
   foregroundColor: string;

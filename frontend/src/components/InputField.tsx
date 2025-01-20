@@ -76,9 +76,9 @@ const InputField: React.FC<InputFieldProps> = ({
     border
     border-gray-200
     dark:border-gray-600
-    py-3
-    h-12
-    px-3
+    py-2
+    h-10
+    px-2
     transition-all
     duration-200
     ease-in-out
@@ -102,10 +102,10 @@ const InputField: React.FC<InputFieldProps> = ({
   `;
 
   return (
-    <div className="mb-6">
+    <div>
       <label
         htmlFor={id}
-        className="block mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200 transition-colors duration-200"
+        className="block mb-1 text-xs font-medium text-gray-800 dark:text-gray-200 transition-colors duration-200"
       >
         {field.label}
         {field.required && <span className="ml-1 text-red-500">*</span>}

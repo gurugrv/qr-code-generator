@@ -17,13 +17,23 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
   const downloadSize = useAppSelector((state: RootState) => state.qrConfig.downloadSize);
 
   const downloadAsPNG = async () => {
-    if (!qrCodeRef.current) return;
+    if (!qrCodeRef.current || !qrCodeRef.current.complete) {
+      setError('QR code image not ready');
+      return;
+    }
     
     setIsLoading('PNG');
     setError(null);
     
     try {
       const img = qrCodeRef.current;
+      
+      // Wait for image to be fully loaded
+      if (!img.complete) {
+        await new Promise((resolve) => {
+          img.onload = resolve;
+        });
+      }
       
       // Create canvas at 2x resolution for better quality
       const scaleFactor = 2;
@@ -75,16 +85,23 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
     }
   };
 
-  const downloadAsSVG = () => {
-    if (!qrCodeRef.current) return;
+  const downloadAsSVG = async () => {
+    if (!qrCodeRef.current || !qrCodeRef.current.complete) {
+      setError('QR code image not ready');
+      return;
+    }
     
     setIsLoading('SVG');
     setError(null);
     
     try {
       const img = qrCodeRef.current;
-      if (!img) {
-        throw new Error('Image element not found');
+      
+      // Wait for image to be fully loaded
+      if (!img.complete) {
+        await new Promise((resolve) => {
+          img.onload = resolve;
+        });
       }
 
       // Create canvas with download size
@@ -127,15 +144,22 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
   };
 
   const downloadAsPDF = async () => {
-    if (!qrCodeRef.current) return;
+    if (!qrCodeRef.current || !qrCodeRef.current.complete) {
+      setError('QR code image not ready');
+      return;
+    }
     
     setIsLoading('PDF');
     setError(null);
     
     try {
       const img = qrCodeRef.current;
-      if (!img) {
-        throw new Error('Image element not found');
+      
+      // Wait for image to be fully loaded
+      if (!img.complete) {
+        await new Promise((resolve) => {
+          img.onload = resolve;
+        });
       }
 
       // Create canvas with download size

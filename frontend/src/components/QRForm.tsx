@@ -3,18 +3,20 @@ import { useAppDispatch, useAppSelector } from '../store/store';
 import { QRCodeTypeValues, QRCodeType } from '../types';
 import { formConfigs } from './QRFormConfig';
 import InputField from './InputField';
+import MapSelector from './MapSelector';
 import {
   setContent,
   setError,
-  generateQR
+  generateQR,
+  setLocationContent
 } from '../features/qrConfig/qrConfigSlice';
 
-const QRForm: React.FC = () => {
+const QRForm: React.FC = React.memo(() => {
   const formRef = useRef<HTMLFormElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const { type, contentByType } = useAppSelector((state) => state.qrConfig);
-const content = contentByType[type] || {};
+  const content = contentByType[type] || {};
   const formConfig = formConfigs[type];
 
   const validateForm = () => {
@@ -71,7 +73,9 @@ const content = contentByType[type] || {};
         return;
       }
     }
-    dispatch(generateQR());
+    const qrData = content;
+
+    dispatch(generateQR(qrData));
   };
 
   // Handle keyboard submission
@@ -87,9 +91,10 @@ const content = contentByType[type] || {};
 
   const handleInputChange = (field: string, value: string) => {
     const currentContent = contentByType[type] || {};
+    const newValue = ['latitude', 'longitude'].includes(field) ? Number(value) : value;
     dispatch(setContent({
       ...currentContent,
-      [field]: value
+      [field]: newValue
     }));
     dispatch(setError(null)); // Clear any previous errors
   };
@@ -102,7 +107,7 @@ const content = contentByType[type] || {};
     <form 
       ref={formRef}
       onSubmit={handleGenerate}
-      className="space-y-4 sm:space-y-6"
+      className="space-y-1 sm:space-y-2"
       role="form"
       aria-label="QR Code Generator Form"
     >
@@ -118,26 +123,112 @@ const content = contentByType[type] || {};
           {content.error}
         </div>
       )}
-      <div 
-        className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 -my-1 gap-x-4"
         role="group"
         aria-label="QR Code Content Fields"
       >
-        {formConfig.fields.map((field) => (
-          <div 
-            key={field.name} 
-            className={field.name === 'address' ? 'md:col-span-2' : ''}
-            role="group"
-            aria-label={field.label}
-          >
-            <InputField
-              field={field}
-              value={content[field.name] || ''}
-              onChange={(value) => handleInputChange(field.name, value)}
-              isValid={true}
-            />
-          </div>
-        ))}
+        {type === QRCodeTypeValues.LOCATION && (
+          <>
+            <div className="md:col-span-2 mb-4">
+              <MapSelector
+                onLocationSelect={(lat, lng) => {
+                  dispatch(setLocationContent({
+                    latitude: lat,
+                    longitude: lng
+                  }));
+                }}
+                initialLat={Number(content['latitude']) || 0}
+                initialLng={Number(content['longitude']) || 0}
+              />
+            </div>
+            <div className="md:col-span-2 grid grid-cols-2 gap-4">
+              {formConfig.fields
+                .filter(field => ['latitude', 'longitude'].includes(field.name))
+                .map(field => (
+                  <div key={field.name} role="group" aria-label={field.label}>
+                    <InputField
+                      field={field}
+                      value={content[field.name] !== undefined ? String(content[field.name]) : ''}
+                      onChange={(value) => handleInputChange(field.name, value)}
+                      isValid={true}
+                    />
+                  </div>
+                ))}
+            </div>
+          </>
+        )}
+        {formConfig.fields
+          .filter(field => type !== QRCodeTypeValues.LOCATION || !['latitude', 'longitude'].includes(field.name))
+          .map((field) => {
+
+          // Special handling for address fields
+          if (['city', 'postcode', 'country'].includes(field.name)) {
+            return (
+              <div 
+                key={field.name}
+                className="md:col-span-2 grid grid-cols-3 gap-x-4"
+              >
+                {field.name === 'city' && (
+                  <>
+                    <div role="group" aria-label="City">
+                      <InputField
+                        field={field}
+                        value={content[field.name] || ''}
+                        onChange={(value) => handleInputChange(field.name, value)}
+                        isValid={true}
+                      />
+                    </div>
+                    {formConfig.fields.map((innerField) => {
+                      if (innerField.name === 'postcode') {
+                        return (
+                          <div key={innerField.name} role="group" aria-label="Postcode">
+                            <InputField
+                              field={innerField}
+                              value={content[innerField.name] || ''}
+                              onChange={(value) => handleInputChange(innerField.name, value)}
+                              isValid={true}
+                            />
+                          </div>
+                        );
+                      }
+                      if (innerField.name === 'country') {
+                        return (
+                          <div key={innerField.name} role="group" aria-label="Country">
+                            <InputField
+                              field={innerField}
+                              value={content[innerField.name] || ''}
+                              onChange={(value) => handleInputChange(innerField.name, value)}
+                              isValid={true}
+                            />
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </>
+                )}
+              </div>
+            );
+          }
+          
+          // Regular fields
+          return (
+            <div 
+              key={field.name} 
+              className={`${field.name === 'address' ? 'md:col-span-2' : ''}`}
+              role="group"
+              aria-label={field.label}
+            >
+              <InputField
+                field={field}
+                value={content[field.name] || ''}
+                onChange={(value) => handleInputChange(field.name, value)}
+                isValid={true}
+              />
+            </div>
+          );
+        })}
       </div>
       <button
         type="submit"
@@ -161,6 +252,6 @@ const content = contentByType[type] || {};
       </button>
     </form>
   );
-};
+});
 
 export default QRForm;

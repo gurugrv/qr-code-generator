@@ -1,5 +1,5 @@
 import { QRCodeTypeValues, FormField } from '../types';
-import { validateEmail, validatePhoneNumber, validateUrl } from '../utils/validation';
+import { validateEmail, validatePhoneNumber, validateUrl, validateLatitude, validateLongitude } from '../utils/validation';
 
 export const formConfigs: Record<string, { fields: FormField[] }> = {
   [QRCodeTypeValues.URL]: {
@@ -34,6 +34,7 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         name: 'encryption',
         type: 'select',
         label: 'Encryption Type',
+        placeholder: 'Select encryption type',
         options: ['WPA', 'WPA2', 'WPA3', 'WEP', 'None'],
         defaultValue: 'WPA'
       }
@@ -242,12 +243,14 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         name: 'startDate',
         type: 'datetime-local',
         label: 'Start Date & Time',
+        placeholder: 'Select start date and time',
         required: true
       },
       {
         name: 'endDate',
         type: 'datetime-local',
         label: 'End Date & Time',
+        placeholder: 'Select end date and time',
         required: true
       },
       {
@@ -261,49 +264,13 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
       }
     ]
   },
-  [QRCodeTypeValues.LOCATION]: {
-    fields: [
-      {
-        name: 'latitude',
-        type: 'number',
-        label: 'Latitude',
-        placeholder: '40.7128',
-        required: true,
-        validation: (value: string) => {
-          const num = parseFloat(value);
-          return !isNaN(num) && num >= -90 && num <= 90;
-        },
-        errorMessage: 'Latitude must be between -90 and 90'
-      },
-      {
-        name: 'longitude',
-        type: 'number',
-        label: 'Longitude',
-        placeholder: '-74.0060',
-        required: true,
-        validation: (value: string) => {
-          const num = parseFloat(value);
-          return !isNaN(num) && num >= -180 && num <= 180;
-        },
-        errorMessage: 'Longitude must be between -180 and 180'
-      },
-      {
-        name: 'name',
-        type: 'text',
-        label: 'Location Name',
-        placeholder: 'Statue of Liberty',
-        required: false,
-        validation: (value: string) => !value || value.length <= 128,
-        errorMessage: 'Location name must be 128 characters or less'
-      }
-    ]
-  },
   [QRCodeTypeValues.SOCIAL]: {
     fields: [
       {
         name: 'platform',
         type: 'select',
         label: 'Social Platform',
+        placeholder: 'Select social platform',
         options: ['Facebook', 'Twitter', 'YouTube', 'Instagram', 'LinkedIn'],
         required: true
       },
@@ -351,8 +318,38 @@ export const formConfigs: Record<string, { fields: FormField[] }> = {
         errorMessage: 'Please enter a valid amount'
       }
     ]
+  },
+  [QRCodeTypeValues.LOCATION]: {
+    fields: [
+      {
+        name: 'latitude',
+        type: 'number',
+        label: 'Latitude',
+        placeholder: '0.000000',
+        required: true,
+        validation: (value: string) => validateLatitude(Number(value)),
+        errorMessage: 'Please enter a valid latitude (-90 to 90)'
+      },
+      {
+        name: 'longitude',
+        type: 'number',
+        label: 'Longitude',
+        placeholder: '0.000000',
+        required: true,
+        validation: (value: string) => validateLongitude(Number(value)),
+        errorMessage: 'Please enter a valid longitude (-180 to 180)'
+      },
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Location Name',
+        placeholder: 'My Location',
+        required: false,
+        validation: (value: string) => !value || value.length <= 128,
+        errorMessage: 'Location name must be 128 characters or less'
+      }
+    ]
   }
-  // ... rest of the existing form configurations remain unchanged
 };
 
 export type FormConfig = typeof formConfigs;

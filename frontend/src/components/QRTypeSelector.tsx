@@ -101,31 +101,33 @@ const QRTypeSelector: React.FC = () => {
   };
 
   return (
-    <nav className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center flex-wrap gap-2 px-2">
+    <nav className="w-full">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between min-h-[64px]">
+          <div className="flex items-center flex-wrap gap-3 px-1">
             {Object.values(QRCodeTypeValues).map((type) => (
-              <div key={type} className="relative">
+              <div key={type} className="relative group">
                 <button
                   onClick={() => handleTypeChange(type)}
                   className={`
-                    flex items-center space-x-2 px-2.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap
-                    transition-colors duration-200
+                    flex items-center space-x-2.5 px-3.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap
+                    transition-all duration-200 transform hover:scale-105
                     ${
                       qrType === type
-                        ? 'bg-blue-500 text-white'
-                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 hover:shadow-sm'
                     }
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/40
                   `}
                 >
-                  {getTypeIcon(type)}
-                  <span>{type}</span>
+                  <span className={`transform transition-transform duration-200 ${qrType === type ? 'scale-110' : 'group-hover:scale-110'}`}>
+                    {getTypeIcon(type)}
+                  </span>
+                  <span className="tracking-wide">{type}</span>
                 </button>
                 {type === QRCodeTypeValues.SOCIAL && showSocialDropdown && (
-                  <div className="absolute left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-                    <div className="p-4">
+                  <div className="absolute left-0 mt-2 w-64 transform transition-all duration-200 origin-top-left">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700/80 backdrop-blur-sm p-4 animate-fadeIn">
                       <Select
                         label="Social Platform"
                         value={selectedPlatform}

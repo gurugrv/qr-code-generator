@@ -18,7 +18,7 @@ const AppLogo: React.FC<AppLogoProps> = ({ className }) => {
         className="w-8 h-8"
       />
       <div className="text-white font-bold text-xl">
-        QR Generator
+        QR Code Generator
       </div>
     </Link>
   );

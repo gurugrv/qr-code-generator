@@ -13,7 +13,11 @@ import {
   generateQR
 } from '../features/qrConfig/qrConfigSlice';
 
-const QRPreview: React.FC = () => {
+interface QRPreviewProps {
+  onImageRefChange?: (ref: HTMLImageElement | null) => void;
+}
+
+const QRPreview: React.FC<QRPreviewProps> = ({ onImageRefChange }) => {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);
@@ -37,13 +41,12 @@ const QRPreview: React.FC = () => {
     });
 
     resizeObserver.observe(img);
+    onImageRefChange?.(img);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
-
-  const qrContainerRef = useRef<HTMLDivElement>(null);
+  }, [onImageRefChange]);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -54,41 +57,47 @@ const QRPreview: React.FC = () => {
     }
   }, [qrCode]);
 
+  const wrapperClasses = "flex flex-col items-center";
+  const containerClasses = "flex flex-col items-center w-full max-w-[320px] h-[320px]";
+  const previewClasses = "w-full h-full flex items-center justify-center relative overflow-hidden";
+
   if (loading) {
     return (
-    <div 
-      className="flex flex-col items-center justify-center min-h-[400px]"
-      role="status"
-      aria-live="polite"
-    >
-      <div 
-        className="w-80 h-80 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl flex items-center justify-center p-8 relative overflow-hidden border border-gray-100 dark:border-gray-700"
-        aria-label="Loading QR Code"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-900/10 animate-pulse"></div>
-        <div className="relative flex flex-col items-center space-y-6">
-          <div className="animate-spin rounded-full h-20 w-20 border-[6px] border-blue-500/20 border-t-blue-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)]"></div>
-          <div className="text-sm text-gray-600 dark:text-gray-300 font-medium tracking-wide">Generating QR Code...</div>
+      <div className={wrapperClasses}>
+        <div className={containerClasses}>
+          <div 
+            className={previewClasses}
+            role="status"
+            aria-live="polite"
+            aria-label="Loading QR Code"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-900/10 animate-pulse"></div>
+            <div className="relative flex flex-col items-center space-y-6">
+              <div className="animate-spin rounded-full h-20 w-20 border-[6px] border-blue-500/20 border-t-blue-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)]"></div>
+              <div className="text-sm text-gray-600 dark:text-gray-300 font-medium tracking-wide">Generating QR Code...</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
     );
   }
 
   if (error) {
     return (
-      <div 
-        className="flex flex-col items-center"
-        role="alert"
-        aria-live="assertive"
-      >
-        <div className="w-80 h-80 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl flex items-center justify-center p-8 relative overflow-hidden border border-red-100 dark:border-red-900/30">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/10"></div>
-          <div className="relative text-center space-y-4">
-            <svg className="w-16 h-16 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div className="text-red-600 dark:text-red-400 font-medium">{error}</div>
+      <div className={wrapperClasses}>
+        <div className={containerClasses}>
+          <div 
+            className={previewClasses}
+            role="alert"
+            aria-live="assertive"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/10"></div>
+            <div className="relative text-center space-y-4">
+              <svg className="w-16 h-16 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div className="text-red-600 dark:text-red-400 font-medium">{error}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -97,19 +106,49 @@ const QRPreview: React.FC = () => {
 
   if (!qrCode) {
     return (
-      <div 
-        className="flex flex-col items-center"
-        role="status"
-        aria-label="QR Code Preview Empty State"
-      >
-        <div className="w-80 h-80 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl flex items-center justify-center p-8 relative overflow-hidden border border-gray-100 dark:border-gray-700">
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800"></div>
-          <div className="relative text-center space-y-4">
-            <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <div className="text-gray-500 dark:text-gray-400 font-medium">
-              Please enter content to generate a QR code
+      <div className={wrapperClasses}>
+        <div className={containerClasses}>
+          <div 
+            className={`${previewClasses} bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 hover:border-blue-500 dark:hover:border-blue-400`}
+            role="status"
+            aria-label="QR Code Preview Empty State"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#374151_1px,transparent_1px)] [background-size:16px_16px] opacity-40"></div>
+            <div className="w-full h-full flex flex-col justify-start p-2">
+              <div className="w-full relative text-center mt-0">
+                <svg
+                  className="w-64 h-64 text-gray-400 dark:text-gray-500 mx-auto"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinejoin="round"
+                >
+                  <rect x="5.5" y="15" width="3.5" height="3.5" />
+                  <rect x="15" y="5.5" width="3.5" height="3.5" />
+                  <rect x="5.5" y="5.5" width="3.5" height="3.5" />
+                  <rect x="11.75" y="5.5" width="0.5" height="0.5" />
+                  <rect x="11.75" y="8.625" width="0.5" height="0.5" />
+                  <rect x="8.625" y="11.75" width="0.5" height="0.5" />
+                  <rect x="11.75" y="14.875" width="0.5" height="0.5" />
+                  <rect x="11.75" y="18" width="0.5" height="0.5" />
+                  <rect x="5.5" y="11.75" width="0.5" height="0.5" />
+                  <rect x="11.75" y="11.75" width="0.5" height="0.5" />
+                  <rect x="14.875" y="11.75" width="0.5" height="0.5" />
+                  <rect x="18" y="11.75" width="0.5" height="0.5" />
+                  <rect x="14.875" y="14.875" width="0.5" height="0.5" />
+                  <rect x="18" y="14.875" width="0.5" height="0.5" />
+                  <rect x="14.875" y="18" width="0.5" height="0.5" />
+                  <rect x="18" y="18" width="0.5" height="0.5" />
+                </svg>
+                <div className="-mt-4">
+                  <div className="text-gray-900 dark:text-gray-100 font-semibold">
+                    No QR Code Generated
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Enter your content to generate a QR code
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -118,31 +157,29 @@ const QRPreview: React.FC = () => {
   }
 
   return (
-    <div 
-      className="flex flex-col items-center space-y-8 w-full max-w-2xl mx-auto"
-      ref={previewRef}
-      tabIndex={-1}
-      role="region"
-      aria-label="QR Code Preview"
-    >
-      <div 
-        ref={qrContainerRef} 
-        className="p-8 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700"
-        role="img"
-        aria-label="Generated QR Code Preview"
-      >
-        <img
-          ref={imgRef}
-          src={qrCode}
-          alt="Generated QR Code"
-          className="aspect-square w-64 h-64 object-contain mx-auto transform transition-all duration-300 hover:scale-105 hover:shadow-lg rounded-xl"
-          style={{ backgroundColor: bgColor }}
-          data-testid="qr-code-preview"
-          loading="eager"
-        />
-      </div>
-      <div className="w-full max-w-md space-y-6 px-4 animate-fadeIn">
-        {qrCode && <DownloadOptions qrCodeRef={qrContainerRef} />}
+    <div className={wrapperClasses}>
+      <div className={containerClasses}>
+        <div
+          ref={previewRef}
+          className={previewClasses}
+          tabIndex={-1}
+          role="region"
+          aria-label="QR Code Preview"
+        >
+          <div className="w-full h-full flex items-center justify-center">
+            <img
+              ref={imgRef}
+              src={qrCode}
+              alt="Generated QR Code"
+              className="w-[98%] aspect-square object-contain transform transition-all duration-300 hover:scale-105"
+              style={{ backgroundColor: bgColor }}
+              data-testid="qr-code-preview"
+              loading="eager"
+              role="img"
+              aria-label="Generated QR Code Preview"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

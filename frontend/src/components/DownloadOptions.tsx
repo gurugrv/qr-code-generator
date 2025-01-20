@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector, type RootState } from '../store/store';
 import { setDownloadSize } from '../features/qrConfig/qrConfigSlice';
 
 interface DownloadOptionsProps {
-  qrCodeRef: React.RefObject<HTMLDivElement | null>;
+  qrCodeRef: React.RefObject<HTMLImageElement | null>;
 }
 
 const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
@@ -23,7 +23,44 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
     setError(null);
     
     try {
-      const canvas = await html2canvas(qrCodeRef.current);
+      const img = qrCodeRef.current;
+      
+      // Create canvas at 2x resolution for better quality
+      const scaleFactor = 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = downloadSize * scaleFactor;
+      canvas.height = downloadSize * scaleFactor;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      
+      if (!ctx) {
+        throw new Error('Could not create canvas context');
+      }
+      
+      // Configure high quality rendering
+      ctx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.scale(scaleFactor, scaleFactor);
+      
+      // Draw image at original size but scaled up
+      ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
+      
+      // Create export canvas at target size
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = downloadSize;
+      exportCanvas.height = downloadSize;
+      const exportCtx = exportCanvas.getContext('2d');
+      
+      if (!exportCtx) {
+        throw new Error('Could not create export canvas context');
+      }
+      
+      // Draw scaled image to export canvas
+      exportCtx.drawImage(canvas, 0, 0, downloadSize, downloadSize);
+      
+      // Use the already created export canvas
+      exportCtx.drawImage(canvas, 0, 0, downloadSize, downloadSize);
+      
+      // Get data URL from canvas
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.download = 'qr-code.png';
@@ -45,12 +82,32 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
     setError(null);
     
     try {
-      const svgElement = qrCodeRef.current.querySelector('svg');
-      if (!svgElement) {
-        throw new Error('SVG element not found');
+      const img = qrCodeRef.current;
+      if (!img) {
+        throw new Error('Image element not found');
       }
 
-      const svgData = new XMLSerializer().serializeToString(svgElement);
+      // Create canvas with download size
+      const canvas = document.createElement('canvas');
+      canvas.width = downloadSize;
+      canvas.height = downloadSize;
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('Could not create canvas context');
+      }
+      
+      // Draw image to canvas at correct size
+      ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
+      
+      // Get data URL from canvas
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Create an SVG that wraps the resized image
+      const svgData = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${downloadSize}" height="${downloadSize}">
+          <image href="${dataUrl}" width="100%" height="100%"/>
+        </svg>`;
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const svgUrl = URL.createObjectURL(svgBlob);
       
@@ -76,20 +133,75 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
     setError(null);
     
     try {
-      const canvas = await html2canvas(qrCodeRef.current);
-      const imgData = canvas.toDataURL('image/png');
+      const img = qrCodeRef.current;
+      if (!img) {
+        throw new Error('Image element not found');
+      }
+
+      // Create canvas with download size
+      const canvas = document.createElement('canvas');
+      canvas.width = downloadSize;
+      canvas.height = downloadSize;
+      const ctx = canvas.getContext('2d');
       
+      if (!ctx) {
+        throw new Error('Could not create canvas context');
+      }
+      
+      // Draw image to canvas at correct size
+      ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
+      
+      // Get data URL from canvas
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Create high-quality PDF with increased DPI
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
+        compress: true,
+        putOnlyUsedFonts: true,
+        hotfixes: ["px_scaling"]
       });
       
-      // Calculate dimensions to maintain aspect ratio
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Set PDF properties for better quality
+      pdf.setProperties({
+        title: 'QR Code',
+        subject: 'Generated QR Code',
+        creator: 'QR Code Generator'
+      });
       
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      // Increase DPI for better quality
+      const dpi = 300;
+      const mmToInch = 25.4;
+      const pxToMm = mmToInch / dpi;
+      
+      // Calculate dimensions in mm accounting for DPI
+      const pageWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const margin = 20; // margin in mm
+      const maxWidth = pageWidth - (2 * margin);
+      const maxHeight = pageHeight - (2 * margin);
+      
+      // Convert download size from px to mm using DPI
+      const qrSizeMm = (downloadSize / dpi) * mmToInch;
+      
+      // Calculate scaling to fit within page margins
+      const scale = Math.min(
+        maxWidth / qrSizeMm,
+        maxHeight / qrSizeMm,
+        1 // Don't scale up
+      );
+      
+      const scaledWidth = qrSizeMm * scale;
+      const scaledHeight = qrSizeMm * scale;
+      
+      // Center the image on the page
+      const x = (pageWidth - scaledWidth) / 2;
+      const y = (pageHeight - scaledHeight) / 2;
+      
+      // Add image with high quality settings
+      pdf.addImage(dataUrl, 'PNG', x, y, scaledWidth, scaledHeight, undefined, 'FAST');
       pdf.save('qr-code.pdf');
     } catch (error) {
       const errorMessage = 'Error downloading PDF file';
@@ -101,8 +213,8 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
   };
 
   return (
-    <div 
-      className="flex flex-col space-y-6 p-6 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700"
+    <div
+      className="flex flex-col space-y-6 p-6"
       role="region"
       aria-labelledby="download-options-title"
     >
@@ -124,7 +236,7 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
         )}
       </div>
 
-      <div className="mt-[4rem] space-y-12">
+      <div className="mt-8 space-y-6">
         <div className="flex flex-col space-y-3">
           <div className="flex justify-between items-center">
             <label
@@ -143,10 +255,11 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
               type="range"
               min="200"
               max="2000"
+              step="50"
               value={downloadSize}
               onChange={(e) => dispatch(setDownloadSize(Number(e.target.value)))}
               className="
-                w-full h-2 rounded-lg appearance-none cursor-pointer
+                w-full max-w-[20rem] h-2 rounded-lg appearance-none cursor-pointer
                 bg-gray-200 dark:bg-gray-700
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
               "
@@ -162,7 +275,7 @@ const DownloadOptions: React.FC<DownloadOptionsProps> = ({ qrCodeRef }) => {
           </div>
         </div>
 
-        <div className="flex flex-row gap-2 justify-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl">
+        <div className="flex flex-row gap-2 justify-center p-4">
           <Tooltip
             content="Best for web and social media sharing"
             id="png-tooltip-desc"

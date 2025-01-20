@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface AppLogoProps {
   className?: string;
@@ -6,7 +7,11 @@ interface AppLogoProps {
 
 const AppLogo: React.FC<AppLogoProps> = ({ className }) => {
   return (
-    <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 transition-all duration-300 ${className}`}>
+    <Link 
+      to="/"
+      className={`flex items-center space-x-3 px-4 py-3 rounded-lg bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary-contrast transition-all duration-300 ${className}`}
+      aria-label="Home"
+    >
       <img 
         src="/logo192.png" 
         alt="QR Generator Logo"
@@ -15,7 +20,7 @@ const AppLogo: React.FC<AppLogoProps> = ({ className }) => {
       <div className="text-white font-bold text-xl">
         QR Generator
       </div>
-    </div>
+    </Link>
   );
 };
 

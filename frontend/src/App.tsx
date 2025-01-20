@@ -1,49 +1,36 @@
-import React from 'react';
-import QRCodeGenerator from './components/QRCodeGenerator';
-import { useAppDispatch, useAppSelector } from './store/store';
-import { toggleDarkMode } from './features/userPreferences/userPreferencesSlice';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AppLayout from './components/AppLayout';
 import ToastsContainer from './components/Toasts';
-import { CogIcon, QuestionMarkCircleIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-import AppLogo from './components/AppLogo';
-import Header from './components/Header';
+import { useAppSelector } from './store/store';
+import Home from './pages/Home';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import Help from './pages/Help';
 
 function App() {
-  const dispatch = useAppDispatch();
-  const darkMode = useAppSelector(state => state.userPreferences.darkMode);
+  const darkMode = useAppSelector(state => state.ui.darkMode);
 
-  const handleToggleDarkMode = () => {
-    dispatch(toggleDarkMode());
-    document.documentElement.classList.toggle('dark');
-  };
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   return (
-    <>
-      <div className="min-h-screen flex flex-col">
-        <Header
-          darkMode={darkMode}
-          onToggleDarkMode={handleToggleDarkMode}
-        />
-
-        {/* Main Content */}
-        <main className="flex-1">
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div className="px-4 py-6 sm:px-0">
-              <QRCodeGenerator />
-            </div>
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="bg-white dark:bg-gray-800">
-          <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
-              © 2025 QR Code Generator. All rights reserved.
-            </p>
-          </div>
-        </footer>
-      </div>
+    <Router>
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
+        </Routes>
+      </AppLayout>
       <ToastsContainer />
-    </>
+    </Router>
   );
 }
 

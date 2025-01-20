@@ -23,6 +23,7 @@ import toastReducer from '../features/toast/toastSlice';
 import qrConfigReducer from '../features/qrConfig/qrConfigSlice';
 import userPreferencesReducer from '../features/userPreferences/userPreferencesSlice';
 import appSettingsReducer from '../features/appSettings/appSettingsSlice';
+import uiReducer from '../features/ui/uiSlice';
 import errorMiddleware from './errorMiddleware';
 
 const createNoopStorage = () => {
@@ -57,7 +58,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage: getStorage(),
-  whitelist: ['qrConfig', 'userPreferences', 'appSettings'],
+  whitelist: ['qrConfig', 'userPreferences', 'appSettings', 'ui'],
   timeout: 2000, // Add timeout to prevent hanging
   serialize: true, // Ensure data is properly serialized
   debug: process.env.NODE_ENV !== 'production', // Enable debug in development
@@ -71,6 +72,7 @@ const rootReducer = (state: any, action: any) => {
     appSettings: appSettingsReducer,
     error: errorReducer,
     toast: toastReducer,
+    ui: uiReducer,
   });
 
   // Handle state migrations

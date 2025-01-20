@@ -6,6 +6,7 @@ interface InputFieldProps {
   onChange: (value: string) => void;
   isValid?: boolean;
   errorMessage?: string;
+  id?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -13,7 +14,8 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   isValid = true,
-  errorMessage
+  errorMessage,
+  id = `field-${field.name}`
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -81,15 +83,24 @@ const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <div className="mb-6">
+      <label
+        htmlFor={id}
+        className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {field.label}
+      </label>
       <div className="relative">
         {field.type === 'select' ? (
           <div className="relative">
             <select
+              id={id}
               value={value || field.options?.[0] || ''}
               onChange={handleChange}
               onFocus={() => setIsFocused(true)}
               onBlur={handleBlur}
-              className={`${baseInputClasses}`}
+              className={`${baseInputClasses} pl-3`}
+              aria-invalid={!isValid}
+              aria-describedby={errorMessage ? `${id}-error` : undefined}
             >
               {field.options?.map((option) => (
                 <option key={option} value={option}>
@@ -109,45 +120,46 @@ const InputField: React.FC<InputFieldProps> = ({
                 </div>
               </div>
               <textarea
+                id={id}
                 value={value}
                 onChange={handleChange}
                 onFocus={() => setIsFocused(true)}
-              onBlur={handleBlur}
+                onBlur={handleBlur}
                 className={`${baseInputClasses} min-h-[120px] resize-y pl-10`}
                 required={field.required}
-                placeholder={field.label}
-                />
+                placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}...`}
+                aria-label={field.label}
+                aria-invalid={!isValid}
+                aria-describedby={errorMessage ? `${id}-error` : undefined}
+              />
               </div>
           </div>
         ) : (
           <div className="relative">
-            <label
-              className={`absolute left-10 -top-2.5 px-1 bg-white dark:bg-gray-700 text-sm text-gray-500 dark:text-gray-400 transition-all duration-200 ${
-                (isFocused || value) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
-              }`}
-            >
-              {field.label}
-            </label>
-            <div className={`absolute left-3 flex items-center text-gray-400 dark:text-gray-500 pointer-events-none transition-all duration-200 ${isFocused || value ? 'top-[1.1rem]' : 'top-[0.875rem]'}`}>
+            <div className="absolute left-3 flex items-center text-gray-400 dark:text-gray-500 pointer-events-none h-full">
               <div className="flex items-center justify-center w-5 h-5">
                 {getInputIcon()}
               </div>
             </div>
             <input
+              id={id}
               type={field.type}
               value={value}
               onChange={handleChange}
               onFocus={() => setIsFocused(true)}
               onBlur={handleBlur}
-              className={`${baseInputClasses} px-3 pl-10 placeholder-transparent`}
+              className={`${baseInputClasses} px-3 pl-10`}
               required={field.required}
-              placeholder={field.label}
+              placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
+              aria-label={field.label}
+              aria-invalid={!isValid}
+              aria-describedby={errorMessage ? `${id}-error` : undefined}
             />
           </div>
         )}
       </div>
       {errorMessage && (isFocused || value) && !isValid && (
-        <p className="mt-2 text-sm text-red-500 dark:text-red-400 flex items-center space-x-1">
+        <p id={`${id}-error`} role="alert" className="mt-2 text-sm text-red-500 dark:text-red-400 flex items-center space-x-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>

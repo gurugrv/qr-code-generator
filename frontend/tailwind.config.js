@@ -6,6 +6,13 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       keyframes: {
         fadeIn: {
@@ -39,11 +46,11 @@ module.exports = {
           dark: '#1a1a1a',
         },
         background: {
-          DEFAULT: '#f8fafc',
+          DEFAULT: '#ffffff',
           dark: '#1a1a1a',
         },
         text: {
-          DEFAULT: '#1a1a1a',
+          DEFAULT: '#000000',
           dark: '#f5f5f5',
         },
         border: {

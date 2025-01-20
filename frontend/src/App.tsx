@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
+import GoogleMapsLoader from './components/GoogleMapsLoader';
 import ToastsContainer from './components/Toasts';
 import { useAppSelector } from './store/store';
 import Home from './pages/Home';
@@ -21,7 +22,8 @@ function App() {
 
   return (
     <Router>
-      <AppLayout>
+      <GoogleMapsLoader>
+        <AppLayout>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
@@ -30,6 +32,7 @@ function App() {
         </Routes>
       </AppLayout>
       <ToastsContainer />
+      </GoogleMapsLoader>
     </Router>
   );
 }

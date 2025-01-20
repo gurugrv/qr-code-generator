@@ -22,6 +22,8 @@ interface GenerateQRCodeParams {
     text?: string;
     phone?: string;
     email?: string;
+    subject?: string;
+    body?: string;
     ssid?: string;
     password?: string;
     encryption?: string;
@@ -30,6 +32,7 @@ interface GenerateQRCodeParams {
     startDate?: string;
     endDate?: string;
     description?: string;
+    message?: string;
     latitude?: number;
     longitude?: number;
     vpa?: string;
@@ -85,16 +88,63 @@ export const generateQRCode = async (
         break;
       }
       case 'WIFI':
+        requestData = {
+          type,
+          data: {
+            ssid: data.ssid,
+            password: data.password,
+            encryption: data.encryption
+          },
+          customization
+        };
+        break;
       case 'VCARD':
+        requestData = {
+          type,
+          data,
+          customization
+        };
+        break;
       case 'EMAIL':
+        requestData = {
+          type,
+          data: {
+            email: data.email,
+            subject: data.subject,
+            body: data.body
+          },
+          customization
+        };
+        break;
       case 'SMS':
+        requestData = {
+          type,
+          data: {
+            phone: data.phone,
+            message: data.message
+          },
+          customization
+        };
+        break;
       case 'CALENDAR':
+        requestData = {
+          type,
+          data: {
+            title: data.title,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            description: data.description
+          },
+          customization
+        };
+        break;
       case 'LOCATION':
         requestData = {
           type,
           data: {
             latitude: data.latitude,
-            longitude: data.longitude
+            longitude: data.longitude,
+            name: data.name
           },
           customization
         };

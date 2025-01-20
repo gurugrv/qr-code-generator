@@ -1,6 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { logError } from '../utils/logger';
-import { HttpError, ValidationError, QRGenerationError } from '../errors';
+import {
+  HttpError,
+  ValidationError,
+  QRGenerationError,
+  VCardValidationError,
+  VCardGenerationError,
+  VCardSecurityError
+} from '../errors';
 import { ErrorCode } from '../errors/errorCodes';
 import { ErrorResponse } from '../errors/errorTypes';
 

@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import React, { createContext, useReducer, useContext, ReactNode, useEffect } from 'react';
 import { QRCodeType, QRPatternType } from '../shared/types';
 
 type QRCodeState = {
@@ -27,7 +27,8 @@ type QRCodeAction =
   | { type: 'SET_CUSTOMIZATION'; payload: QRCodeState['customization'] }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'SET_QR_CODE'; payload: string | null };
+  | { type: 'SET_QR_CODE'; payload: string | null }
+  | { type: 'RESET_STATE' };
 
 type QRCodeContextType = {
   state: QRCodeState;
@@ -69,15 +70,23 @@ function qrCodeReducer(state: QRCodeState, action: QRCodeAction): QRCodeState {
       return { ...state, error: action.payload };
     case 'SET_QR_CODE':
       return { ...state, qrCode: action.payload };
+    case 'RESET_STATE':
+      return initialState;
     default: {
       const _exhaustiveCheck: never = action;
-      throw new Error(`Unhandled action type: ${(_exhaustiveCheck as any).type}`);
+      return state;
     }
   }
 }
 
 export function QRCodeProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(qrCodeReducer, initialState);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: 'RESET_STATE' });
+    };
+  }, []);
 
   return (
     <QRCodeContext.Provider value={{ state, dispatch }}>

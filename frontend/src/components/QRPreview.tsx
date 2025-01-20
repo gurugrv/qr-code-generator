@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/store';
 import {
   selectLoading,
@@ -11,7 +11,6 @@ import {
   setDownloadSize,
   generateQR
 } from '../features/qrConfig/qrConfigSlice';
-import { useEffect } from 'react';
 
 const QRPreview: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -26,37 +25,59 @@ const QRPreview: React.FC = () => {
   const type = useAppSelector(state => state.qrConfig.type);
   const content = useAppSelector(state => state.qrConfig.contentByType[type]);
 
-  const handleDownload = async () => {
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      // Empty callback to prevent the warning
+    });
+
+    resizeObserver.observe(img);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const handleDownload = useCallback(async () => {
     if (qrCode) {
       // Create a new image with the download size
-      const img = new Image();
-      img.src = qrCode;
-      
-      await new Promise((resolve) => {
-        img.onload = resolve;
-      });
+      try {
+        const img = new Image();
+        img.src = qrCode;
+        
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
 
-      const canvas = document.createElement('canvas');
-      canvas.width = downloadSize;
-      canvas.height = downloadSize;
-      const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        // Draw with background color first
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, downloadSize, downloadSize);
+        const canvas = document.createElement('canvas');
+        canvas.width = downloadSize;
+        canvas.height = downloadSize;
+        const ctx = canvas.getContext('2d');
         
-        // Draw the QR code image scaled to download size
-        ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
-        
-        // Convert to PNG and download
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'qrcode.png';
-        link.click();
+        if (ctx) {
+          // Draw with background color first
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(0, 0, downloadSize, downloadSize);
+          
+          // Draw the QR code image scaled to download size
+          ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
+          
+          // Convert to PNG and download
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = 'qrcode.png';
+          link.click();
+        }
+      } catch (error) {
+        console.error('Error downloading QR code:', error);
       }
     }
-  };
+  }, [qrCode, downloadSize, bgColor]);
 
   if (loading) {
     return (
@@ -110,11 +131,13 @@ const QRPreview: React.FC = () => {
     <div className="flex flex-col items-center space-y-8">
       <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
         <img
+          ref={imgRef}
           src={qrCode}
           alt="Generated QR Code"
           className="w-80 h-80 mx-auto transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
           style={{ backgroundColor: bgColor }}
           data-testid="qr-code-preview"
+          loading="eager"
         />
       </div>
       <div className="w-full max-w-md space-y-6 px-4">

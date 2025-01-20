@@ -35,6 +35,10 @@ const InputField: React.FC<InputFieldProps> = ({
     }
   };
 
+  if (!field) {
+    return <div className="text-red-500">Invalid field configuration</div>;
+  }
+
   const getInputIcon = () => {
     switch (field.type) {
       case 'email':
@@ -81,26 +85,18 @@ const InputField: React.FC<InputFieldProps> = ({
         {field.type === 'select' ? (
           <div className="relative">
             <select
-              value={value}
+              value={value || field.options?.[0] || ''}
               onChange={handleChange}
               onFocus={() => setIsFocused(true)}
               onBlur={handleBlur}
-              className={`${baseInputClasses} appearance-none`}
+              className={`${baseInputClasses}`}
             >
-              <option value="" disabled hidden>
-                {field.placeholder}
-              </option>
               {field.options?.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
               ))}
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
           </div>
         ) : field.type === 'textarea' ? (
           <div className="relative">
@@ -125,6 +121,13 @@ const InputField: React.FC<InputFieldProps> = ({
           </div>
         ) : (
           <div className="relative">
+            <label
+              className={`absolute left-10 -top-2.5 px-1 bg-white dark:bg-gray-700 text-sm text-gray-500 dark:text-gray-400 transition-all duration-200 ${
+                (isFocused || value) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+              }`}
+            >
+              {field.label}
+            </label>
             <div className={`absolute left-3 flex items-center text-gray-400 dark:text-gray-500 pointer-events-none transition-all duration-200 ${isFocused || value ? 'top-[1.1rem]' : 'top-[0.875rem]'}`}>
               <div className="flex items-center justify-center w-5 h-5">
                 {getInputIcon()}
@@ -136,7 +139,7 @@ const InputField: React.FC<InputFieldProps> = ({
               onChange={handleChange}
               onFocus={() => setIsFocused(true)}
               onBlur={handleBlur}
-              className={`${baseInputClasses} px-3 pl-10`}
+              className={`${baseInputClasses} px-3 pl-10 placeholder-transparent`}
               required={field.required}
               placeholder={field.label}
             />

@@ -34,7 +34,20 @@ const initialState: QRConfigState = {
     EMAIL: { email: '', subject: '', body: '' },
     PHONE: { phone: '' },
     WIFI: { ssid: '', password: '', encryption: 'WPA' },
-    VCARD: { name: '', phone: '', email: '' },
+    VCARD: {
+      firstName: '',
+      lastName: '',
+      phone: '',
+      mobile: '',
+      email: '',
+      website: '',
+      organization: '',
+      jobTitle: '',
+      address: '',
+      city: '',
+      postcode: '',
+      country: ''
+    },
     SMS: { phone: '', message: '' },
     CALENDAR: { title: '', startDate: '', endDate: '', description: '' },
     LOCATION: { latitude: 0, longitude: 0 },
@@ -124,9 +137,20 @@ export const generateQR = createAsyncThunk<QRCodeResponse, void, { state: RootSt
               };
             case 'VCARD':
               return {
-                name: content.name,
+                firstName: content.firstName,
+                lastName: content.lastName,
                 phone: content.phone,
-                email: content.email
+                mobile: content.mobile,
+                email: content.email,
+                website: content.website,
+                organization: content.organization,
+                jobTitle: content.jobTitle,
+                address: {
+                  street: content.address,
+                  city: content.city,
+                  postcode: content.postcode,
+                  country: content.country
+                }
               };
             case 'SMS':
               return {

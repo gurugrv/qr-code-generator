@@ -14,6 +14,9 @@ const QRForm: React.FC = () => {
   const { type, contentByType } = useAppSelector((state) => state.qrConfig);
 const content = contentByType[type] || {};
   const formConfig = formConfigs[type];
+  if (!formConfig) {
+    return <div className="text-red-500">Invalid QR code type selected</div>;
+  }
 
   const validateForm = () => {
     if (!content) {
@@ -51,39 +54,38 @@ const content = contentByType[type] || {};
           return (field.required && !value) ||
                  (field.validation && !field.validation(value));
         })
-        .map(field => field.errorMessage || `${field.label} is required`);
+        .map(field => {
+          if (field.required && !content[field.name]) {
+            return field.errorMessage || `${field.label} is required`;
+          }
+          if (field.validation && !field.validation(content[field.name] || '')) {
+            return field.errorMessage || `Invalid ${field.label}`;
+          }
+          return '';
+        })
+        .filter(msg => msg !== '');
       
-      dispatch(setError(errors.join(', ')));
-      return;
+      if (errors.length > 0) {
+        dispatch(setError(errors.join(', ')));
+        return;
+      }
     }
     dispatch(generateQR());
   };
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        {formConfig.fields.map((field) => {
-          const value = content[field.name] || '';
-          const isValid = !field.validation || field.validation(value);
-          const isRequiredError = field.required && !value;
-          
-          return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {formConfig.fields.map((field) => (
+          <div key={field.name} className={field.name === 'address' ? 'md:col-span-2' : ''}>
             <InputField
-              key={field.name}
               field={field}
-              value={value}
+              value={content[field.name] || ''}
               onChange={(value) => handleInputChange(field.name, value)}
-              isValid={isValid && !isRequiredError}
-              errorMessage={
-                !isValid
-                  ? field.errorMessage
-                  : isRequiredError
-                  ? 'This field is required'
-                  : undefined
-              }
+              isValid={true}
             />
-          );
-        })}
+          </div>
+        ))}
       </div>
       <button
         onClick={handleGenerate}

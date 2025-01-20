@@ -29,12 +29,12 @@ export const generateQRCode = async (req: Request<{}, {}, GenerateQRCodeRequest>
       });
     }
 
-    // Validate input and customization
-    const validationResult = validateQRInput(type, data, customization);
-    if (!validationResult.success) {
+    // Validate input
+    const validationResult = validateQRInput(data, type);
+    if (!validationResult.isValid) {
       return res.status(400).json({
         status: 'error',
-        message: validationResult.errors
+        message: validationResult.errors.join(', ')
       });
     }
     

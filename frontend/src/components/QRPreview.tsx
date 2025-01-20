@@ -42,6 +42,11 @@ const QRPreview: React.FC<QRPreviewProps> = ({ onImageRefChange }) => {
     }
   }, [qrCode]);
 
+  // Clear last valid QR code when type changes
+  useEffect(() => {
+    setLastValidQRCode(null);
+  }, [type]);
+
   // Simple ref effect without ResizeObserver
   useEffect(() => {
     if (imgRef.current) {

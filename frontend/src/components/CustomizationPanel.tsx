@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { setFgColor, setBgColor, setSize, generateQR, selectQRConfig, resetConfig } from '../features/qrConfig/qrConfigSlice';
+import { setFgColor, setBgColor, setSize, generateQR, selectQRConfig, resetConfig, setContent } from '../features/qrConfig/qrConfigSlice';
 import ColorPicker from './ColorPicker';
 import LogoUploader from './LogoUploader';
 import { useDebounce } from '../hooks/useDebounce';
@@ -75,13 +75,19 @@ const CustomizationPanel: React.FC = () => {
           <div className="flex gap-4">
             <Tooltip content="Reset all customizations to default settings">
               <button
-                onClick={() => {
+                onClick={async () => {
+                  const currentContent = contentByType[type];
                   dispatch(resetConfig());
+                  dispatch(setContent(currentContent));
+                  dispatch(generateQR(currentContent));
                 }}
-                onKeyDown={(e) => {
+                onKeyDown={async (e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
+                    const currentContent = contentByType[type];
                     dispatch(resetConfig());
+                    dispatch(setContent(currentContent));
+                    dispatch(generateQR(currentContent));
                   }
                 }}
                 disabled={loading}

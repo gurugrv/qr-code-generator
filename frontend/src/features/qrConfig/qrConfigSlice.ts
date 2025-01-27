@@ -298,7 +298,38 @@ export const qrConfigSlice = createSlice({
         ...action.payload
       };
     },
-    resetConfig: () => initialState,
+    resetConfig: (state) => {
+      const currentType = state.type;
+      const currentContent = state.contentByType[currentType];
+      const currentDownloadSize = state.downloadSize;
+      const currentQRCode = state.qrCode;
+      
+      // Reset to initial state but preserve certain values
+      return {
+        ...initialState,
+        type: currentType,
+        downloadSize: currentDownloadSize,
+        qrCode: currentQRCode,
+        contentByType: {
+          ...initialState.contentByType,
+          [currentType]: currentContent
+        },
+        // Reset customization to initial values
+        fgColor: initialState.fgColor,
+        bgColor: initialState.bgColor,
+        size: initialState.size,
+        margin: initialState.margin,
+        errorCorrectionLevel: initialState.errorCorrectionLevel,
+        customization: {
+          ...initialState.customization,
+          size: initialState.size,
+          foregroundColor: initialState.fgColor,
+          backgroundColor: initialState.bgColor,
+          margin: initialState.margin,
+          errorCorrectionLevel: initialState.errorCorrectionLevel,
+        }
+      };
+    },
     setType: (state, action: PayloadAction<QRCodeType>) => {
       state.type = action.payload;
       state.qrCode = null; // Reset QR code when changing type
